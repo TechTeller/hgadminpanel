@@ -62,11 +62,3 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
-
-model MessageEmbed {
-  id      String  @id @default(cuid())
-  title   String
-  slug    String  @unique
-  message String  @db.Text
-  image   String?
-}

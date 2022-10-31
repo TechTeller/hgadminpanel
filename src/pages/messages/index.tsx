@@ -8,7 +8,7 @@ export interface ColumnProps {
   headerName: string,
 }
 
-export interface ParentAdminProps {
+export interface ListAdminProps {
   title: string,
   slug: string
   columnProps: ColumnProps[],
@@ -36,7 +36,7 @@ const constructColumns = (columnData: ColumnProps[], slug: string) => {
   return colDef
 }
 
-const ParentAdmin = (props: ParentAdminProps) => {
+const EmbedListAdmin = (props: ListAdminProps) => {
   const { columnProps, rows, slug, title } = props;
   const columns = constructColumns(columnProps, slug)
   return (
@@ -47,4 +47,4 @@ const ParentAdmin = (props: ParentAdminProps) => {
   )
 }
 
-export default ParentAdmin
+export default EmbedListAdmin

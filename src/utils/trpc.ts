@@ -28,3 +28,8 @@ export const trpc = createTRPCNext<AppRouter>({
   },
   ssr: false,
 });
+
+export const jsonFetch = async (url: string, method: string, data: object) => {
+  const body = JSON.stringify(data)
+  return async () => await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body })
+}
