@@ -10,7 +10,7 @@ const FollowUpAdminList = () => {
       ]}
       rowData={[{ "id": 5, "title": "Test Message", "message": "Please remember to remove this placeholder" }]}
       slug="followUps"
-      title="followUps"
+      title="Follow Up Messages"
     />
   )
 }

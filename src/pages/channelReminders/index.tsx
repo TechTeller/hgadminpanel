@@ -1,17 +1,23 @@
 import AdminList from "../../components/AdminList"
+import Layout from "../../components/Layout"
+import { trpc } from "../../utils/trpc"
+
 
 const ChannelReminderAdminList = () => {
-  // TODO get data from API
+  const res = trpc.channelReminder.getAll.useQuery()
+  console.log(res.isLoading ? "NOT YET" : res.data)
   return (
-    <AdminList
-      columnProps={[
-        { fieldName: 'title', headerName: 'Title' },
-        { fieldName: 'message', headerName: 'Message' }
-      ]}
-      rowData={[{ "id": 5, "title": "Test Message", "message": "Please remember to remove this placeholder" }]}
-      slug="channelReminders"
-      title="Channel Reminders"
-    />
+    <Layout>
+      <AdminList
+        columnProps={[
+          { fieldName: 'header', headerName: 'Title' },
+          { fieldName: 'description', headerName: 'Message' }
+        ]}
+        rowData={res.isLoading ? [] : (res.data ?? [])}
+        slug="channelReminders"
+        title="Channel Reminders"
+      />
+    </Layout>
   )
 }
 

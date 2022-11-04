@@ -1,6 +1,7 @@
 // src/utils/trpc.ts
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
+import { TRPCError } from "@trpc/server"
 import type { AppRouter } from "../server/trpc/router";
 import superjson from "superjson";
 
@@ -29,7 +30,25 @@ export const trpc = createTRPCNext<AppRouter>({
   ssr: false,
 });
 
-export const jsonFetch = async (url: string, method: string, data: object) => {
-  const body = JSON.stringify(data)
-  return async () => await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body })
+export const jsonFetch = async (url: string, method: string, data?: object) => {
+  try {
+    let body
+    let headers
+    if (data) {
+      body = JSON.stringify(data)
+      headers = { 'Content-Type': 'application/json' }
+    }
+    const res = await fetch(url, { method, headers, body })
+    console.log("help", res)
+    const result = await res.json()
+    return result
+  } catch (err) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'An unexpected error occurred, please try again later.',
+      // optional: pass the original error to retain stack trace
+      cause: err,
+    });
+
+  }
 }

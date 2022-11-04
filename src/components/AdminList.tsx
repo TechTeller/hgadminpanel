@@ -1,7 +1,6 @@
 import React from "react"
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import Link from "next/link"
-import Layout from "./Layout"
 
 export interface ColumnProps {
   fieldName: string,
@@ -43,6 +42,7 @@ const constructColumns = (columnData: ColumnProps[], slug: string) => {
 
 const constructRows = (columnData: ColumnProps[], rowsData: any[]) => {
   const rows: any[] = []
+  console.log("raw data", rowsData)
   for (let data of rowsData) {
     let row: any = { id: data.id }
     for (let item of columnData) {
@@ -51,6 +51,7 @@ const constructRows = (columnData: ColumnProps[], rowsData: any[]) => {
     }
     rows.push(row)
   }
+  console.log("processed data", rows)
   return rows
 }
 
@@ -59,7 +60,7 @@ const AdminList = (props: AdminListProps) => {
   const columns = constructColumns(columnProps, slug)
   const rows = constructRows(columnProps, rowData)
   return (
-    <Layout>
+    <>
       <div className="m-2 self-start text-sm">
         <Link href="/">{"< Back to main page"}</Link>
       </div>
@@ -71,18 +72,19 @@ const AdminList = (props: AdminListProps) => {
           rows={rows}
           autoHeight
           pageSize={20}
+          rowsPerPageOptions={[20]}
           pagination
           checkboxSelection
           sx={{
             backgroundColor: '#334155',
-            color: '#fafafa',
+            color: '#f1f5f9',
             '& .MuiTablePagination-root': {
-              color: '#fafafa',
+              color: '#f1f5f9',
             },
           }}
         />
       </div>
-    </Layout>
+    </>
   )
 }
 
