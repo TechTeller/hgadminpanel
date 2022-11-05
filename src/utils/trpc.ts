@@ -2,8 +2,10 @@
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import { TRPCError } from "@trpc/server"
-import type { AppRouter } from "../server/trpc/router";
+import type { AppRouter } from "@/server/trpc/router";
 import superjson from "superjson";
+
+export const BOT_API_URL = "http://localhost:2218/api/admin"
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url

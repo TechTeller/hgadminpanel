@@ -1,7 +1,6 @@
 import type { NextPage } from "next"
 import Link from "next/link"
-import Layout from "../components/Layout"
-// import { trpc } from "../utils/trpc"
+import Layout from "@/components/Layout"
 
 interface StyledLinkProps {
   slug: string

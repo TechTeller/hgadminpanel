@@ -1,6 +1,6 @@
 import { router, protectedProcedure } from "../trpc"
 import { z } from "zod"
-import { jsonFetch } from "../../../utils/trpc"
+import { jsonFetch } from "@/utils/trpc"
 
 export const scheduleRouter = router({
   get: protectedProcedure.query(async () => {

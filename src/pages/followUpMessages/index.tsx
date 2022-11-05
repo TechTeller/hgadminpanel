@@ -1,4 +1,4 @@
-import AdminList from "../../components/AdminList"
+import AdminList from "@/components/AdminList"
 
 const FollowUpAdminList = () => {
   // TODO get data from API

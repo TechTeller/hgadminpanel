@@ -1,9 +1,9 @@
 import { Box, Button } from "@mui/material"
 import { useRouter } from "next/router"
 import Link from "next/link"
-import Layout from "../../components/Layout"
-import StyledTextField from "../../components/StyledTextField"
-import { trpc } from "../../utils/trpc"
+import Layout from "@/components/Layout"
+import StyledTextField from "@/components/StyledTextField"
+import { trpc } from "@/utils/trpc"
 
 
 const ReminderFormPage = () => {

@@ -1,6 +1,6 @@
-import AdminList from "../../components/AdminList"
-import Layout from "../../components/Layout"
-import { trpc } from "../../utils/trpc"
+import AdminList from "@/components/AdminList"
+import Layout from "@/components/Layout"
+import { trpc } from "@/utils/trpc"
 
 
 const ChannelReminderAdminList = () => {
@@ -13,7 +13,7 @@ const ChannelReminderAdminList = () => {
           { fieldName: 'header', headerName: 'Title' },
           { fieldName: 'description', headerName: 'Message' }
         ]}
-        rowData={res.isLoading ? [] : (res.data ?? [])}
+        rowData={res.data ?? []}
         slug="channelReminders"
         title="Channel Reminders"
       />
