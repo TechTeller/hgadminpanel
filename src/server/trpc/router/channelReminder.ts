@@ -7,14 +7,15 @@ export const channelReminderRouter = router({
     return await jsonFetch(`${BOT_API_URL}/reminders/`, 'GET')
   }),
   createOne: protectedProcedure
-    .input(z.object({ title: z.string(), message: z.string() }))
+    .input(z.object({ header: z.string(), description: z.string() }))
     .mutation(async ({ input }) => {
       return await jsonFetch(`${BOT_API_URL}/reminders/`, 'POST', input)
     }),
   updateOne: protectedProcedure
-    .input(z.object({ id: z.string(), title: z.string(), message: z.string() }))
+    .input(z.object({ id: z.string(), header: z.string(), description: z.string() }))
     .mutation(async ({ input }) => {
       const { id, ...rest } = input
+      console.log("UPDATE", input, id)
       return await jsonFetch(`${BOT_API_URL}/reminder/${id}`, 'PUT', rest)
     }),
   findById: protectedProcedure

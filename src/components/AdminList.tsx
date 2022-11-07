@@ -1,4 +1,5 @@
 import React from "react"
+import { Button } from "@mui/material"
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import Link from "next/link"
 
@@ -61,8 +62,9 @@ const AdminList = (props: AdminListProps) => {
   const rows = constructRows(columnProps, rowData)
   return (
     <>
-      <div className="m-2 self-start text-sm">
+      <div className="flex items-center justify-between w-full p-4">
         <Link href="/">{"< Back to main page"}</Link>
+        <Button size="large" variant="contained" href={`/${slug}/new`}>Add New +</Button>
       </div>
       <div className="container px-4">
         <h2 className="py-4 text-xl">{title}</h2>

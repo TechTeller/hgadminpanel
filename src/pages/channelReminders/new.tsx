@@ -1,5 +1,5 @@
 import { Box, Button, TextField } from "@mui/material"
-import { useRouter } from "next/router"
+import Router from "next/router"
 import Link from "next/link"
 import Layout from "@/components/Layout"
 import { trpc } from "@/utils/trpc"
@@ -7,26 +7,15 @@ import { ChangeEvent, useState } from "react"
 
 
 const ReminderFormPage = () => {
-  const router = useRouter()
-  const id = router.query.id as string
   const [header, setHeader] = useState("")
   const [description, setDescription] = useState("")
 
-  const res = trpc.channelReminder.findById.useQuery({ id }, {
-    onSuccess: (data) => {
-      console.log("SUCCESS!")
-      const { header: dataHeader, description: dataDescription } = data
-      setHeader(dataHeader)
-      setDescription(dataDescription)
-    }
-  })
-
-  const submitMutation = trpc.channelReminder.updateOne.useMutation({ onSuccess: () => res.refetch() })
+  const submitMutation = trpc.channelReminder.createOne.useMutation({ onSuccess: () => Router.push("/channelReminders") })
 
   const handleSubmit = (event: ChangeEvent<any>) => {
     console.log("SUBMITTING")
     event.preventDefault()
-    submitMutation.mutate({ id, header, description })
+    submitMutation.mutate({ header, description })
   }
 
   return (
@@ -44,7 +33,6 @@ const ReminderFormPage = () => {
               fullWidth
               id="filled-input"
               variant="filled"
-              InputLabelProps={{ shrink: true }}
               inputProps={{ 'aria-label': 'embed-header' }}
               sx={{
                 backgroundColor: '#334155',
@@ -66,7 +54,6 @@ const ReminderFormPage = () => {
               fullWidth
               id="filled-multiline-static"
               variant="filled"
-              InputLabelProps={{ shrink: true }}
               inputProps={{ 'aria-label': 'embed-description' }}
               sx={{
                 backgroundColor: '#334155',

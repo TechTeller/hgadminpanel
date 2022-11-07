@@ -43,6 +43,7 @@ export const jsonFetch = async (url: string, method: string, data?: object) => {
     const res = await fetch(url, { method, headers, body })
     console.log("help", res)
     const result = await res.json()
+    console.log("json", result)
     return result
   } catch (err) {
     throw new TRPCError({
