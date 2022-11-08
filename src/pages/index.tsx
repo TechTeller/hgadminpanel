@@ -24,7 +24,7 @@ const Home: NextPage = () => {
           <div className="text-xl pb-4">Messages</div>
           <div className="flex flex-col bg-slate-600">
             <StyledLink slug="channelReminders/" title="Channel Reminders" />
-            <StyledLink slug="followUpMessages/" title="Follow Up Messages" />
+            <StyledLink slug="followupMessages/" title="Follow Up Messages" />
             <StyledLink slug="schedule/" title="Stream Schedule" />
           </div>
           <div className="text-xl py-4">Users</div>
@@ -33,7 +33,7 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-    </Layout >
+    </Layout>
   )
 }
 

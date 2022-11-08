@@ -5,7 +5,6 @@ import { trpc } from "@/utils/trpc"
 
 const ChannelReminderAdminList = () => {
   const res = trpc.channelReminder.getAll.useQuery()
-  console.log(res.isLoading ? "NOT YET" : res.data)
   return (
     <Layout>
       <AdminList

@@ -1,24 +1,32 @@
-import { ChangeEvent, useState } from "react"
 import { Box, Button, TextField } from "@mui/material"
 import { useRouter } from "next/router"
 import Link from "next/link"
 import Layout from "@/components/Layout"
 import { trpc } from "@/utils/trpc"
+import { ChangeEvent, useState } from "react"
 
 
-const ReminderNewFormPage = () => {
+const FollowupFormPage = () => {
   const router = useRouter()
-  const { pathname } = router
-  const [header, setHeader] = useState("")
+  const id = router.query.id as string
+  const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [tag, setTag] = useState("")
 
-  const submitMutation = trpc.channelReminder.createOne.useMutation({
-    onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/") 
+  const res = trpc.followup.findById.useQuery({ id }, {
+    onSuccess: (data) => {
+      const { title: dataTitle, description: dataDescription, tag: dataTag } = data
+      setTitle(dataTitle)
+      setDescription(dataDescription)
+      setTag(dataTag)
+    }
   })
+
+  const submitMutation = trpc.followup.updateOne.useMutation({ onSuccess: () => res.refetch() })
 
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault()
-    submitMutation.mutate({ header, description })
+    submitMutation.mutate({ id, title, description, tag })
   }
 
   return (
@@ -31,11 +39,12 @@ const ReminderNewFormPage = () => {
           <Box className="flex flex-col flex-1 w-full p-4 bg-slate-600 gap-4">
             <TextField
               label="Title"
-              value={header}
-              onChange={(event: ChangeEvent<any>) => setHeader(event.target.value)}
+              value={title}
+              onChange={(event: ChangeEvent<any>) => setTitle(event.target.value)}
               fullWidth
               id="filled-input"
               variant="filled"
+              InputLabelProps={{ shrink: true }}
               inputProps={{ 'aria-label': 'embed-header' }}
               sx={{
                 backgroundColor: '#334155',
@@ -57,6 +66,7 @@ const ReminderNewFormPage = () => {
               fullWidth
               id="filled-multiline-static"
               variant="filled"
+              InputLabelProps={{ shrink: true }}
               inputProps={{ 'aria-label': 'embed-description' }}
               sx={{
                 backgroundColor: '#334155',
@@ -69,6 +79,25 @@ const ReminderNewFormPage = () => {
                 },
               }}
             />
+            <TextField
+              label="Tag"
+              value={tag}
+              onChange={(event: ChangeEvent<any>) => setTag(event.target.value)}
+              fullWidth
+              id="filled-input"
+              variant="filled"
+              inputProps={{ 'aria-label': 'embed-tag' }}
+              sx={{
+                backgroundColor: '#334155',
+                color: '#f1f5f9',
+                '& #filled-input': {
+                  color: '#f1f5f9',
+                },
+                '& #filled-input-label': {
+                  color: '#f1f5f9',
+                },
+              }}
+            />
             <Button type="submit" variant="contained">Save</Button>
           </Box>
         </form>
@@ -77,4 +106,4 @@ const ReminderNewFormPage = () => {
   )
 }
 
-export default ReminderNewFormPage
+export default FollowupFormPage

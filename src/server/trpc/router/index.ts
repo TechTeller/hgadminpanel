@@ -3,14 +3,14 @@ import { router } from "../trpc";
 import { authRouter } from "./auth";
 import { channelReminderRouter } from "./channelReminder"
 import { discordUserRouter } from "./discordUser";
-import { followUpRouter } from "./followUp";
+import { followupRouter } from "./followUp";
 import { scheduleRouter } from "./schedule";
 
 export const appRouter = router({
   auth: authRouter,
   channelReminder: channelReminderRouter,
   discordUser: discordUserRouter,
-  followUp: followUpRouter,
+  followup: followupRouter,
   schedule: scheduleRouter,
 });
 

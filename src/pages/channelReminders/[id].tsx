@@ -14,7 +14,6 @@ const ReminderFormPage = () => {
 
   const res = trpc.channelReminder.findById.useQuery({ id }, {
     onSuccess: (data) => {
-      console.log("SUCCESS!")
       const { header: dataHeader, description: dataDescription } = data
       setHeader(dataHeader)
       setDescription(dataDescription)
@@ -24,7 +23,6 @@ const ReminderFormPage = () => {
   const submitMutation = trpc.channelReminder.updateOne.useMutation({ onSuccess: () => res.refetch() })
 
   const handleSubmit = (event: ChangeEvent<any>) => {
-    console.log("SUBMITTING")
     event.preventDefault()
     submitMutation.mutate({ id, header, description })
   }
