@@ -3,17 +3,17 @@ import Layout from "@/components/Layout"
 import { trpc } from "@/utils/trpc"
 
 const FollowUpAdminList = () => {
-  const res = trpc.discordUsers.getAll.useQuery()
+  const res = trpc.discordRole.getAll.useQuery()
   return (
     <Layout>
       <AdminList
         columnProps={[
-          { fieldName: 'username', headerName: 'Username' },
-          { fieldName: 'roles', headerName: 'Roles'}
+          { fieldName: 'name', headerName: 'Role or User Name' },
+          { fieldName: 'discordId', headerName: 'Role ID' },
         ]}
         rowData={res.data ?? []}
-        slug="discordUsers"
-        title="Discord Users"
+        slug="discordRoles"
+        title="Admin Roles (Discord)"
       />
     </Layout>
   )

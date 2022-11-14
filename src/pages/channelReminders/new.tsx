@@ -1,9 +1,11 @@
 import { ChangeEvent, useState } from "react"
-import { Box, Button, TextField } from "@mui/material"
 import { useRouter } from "next/router"
+import { trpc } from "@/utils/trpc"
+import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
 import Link from "next/link"
 import Layout from "@/components/Layout"
-import { trpc } from "@/utils/trpc"
+import StyledTextField from "@/components/StyledTextField"
 
 
 const ReminderNewFormPage = () => {
@@ -13,7 +15,7 @@ const ReminderNewFormPage = () => {
   const [description, setDescription] = useState("")
 
   const submitMutation = trpc.channelReminder.createOne.useMutation({
-    onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/") 
+    onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/")
   })
 
   const handleSubmit = (event: ChangeEvent<any>) => {
@@ -29,45 +31,19 @@ const ReminderNewFormPage = () => {
       <Box className="w-full p-4">
         <form onSubmit={handleSubmit}>
           <Box className="flex flex-col flex-1 w-full p-4 bg-slate-600 gap-4">
-            <TextField
+            <StyledTextField
               label="Title"
               value={header}
               onChange={(event: ChangeEvent<any>) => setHeader(event.target.value)}
-              fullWidth
-              id="filled-input"
-              variant="filled"
               inputProps={{ 'aria-label': 'embed-header' }}
-              sx={{
-                backgroundColor: '#334155',
-                color: '#f1f5f9',
-                '& #filled-input': {
-                  color: '#f1f5f9',
-                },
-                '& #filled-input-label': {
-                  color: '#f1f5f9',
-                },
-              }}
             />
-            <TextField
+            <StyledTextField
               label="Message"
               value={description}
               onChange={(event: ChangeEvent<any>) => setDescription(event.target.value)}
               multiline
               rows={4}
-              fullWidth
-              id="filled-multiline-static"
-              variant="filled"
               inputProps={{ 'aria-label': 'embed-description' }}
-              sx={{
-                backgroundColor: '#334155',
-                color: '#f1f5f9',
-                '& #filled-multiline-static': {
-                  color: '#f1f5f9',
-                },
-                '& #filled-multiline-static-label': {
-                  color: '#f1f5f9',
-                },
-              }}
             />
             <Button type="submit" variant="contained">Save</Button>
           </Box>

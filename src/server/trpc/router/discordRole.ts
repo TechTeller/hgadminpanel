@@ -2,7 +2,7 @@ import { router, publicProcedure } from "../trpc"
 import { z } from "zod"
 import { DiscordUser } from "@prisma/client"
 
-export const discordUserRouter = router({
+export const discordRoleRouter = router({
   hello: publicProcedure
     .input(z.object({ text: z.string().nullish() }).nullish())
     .query(({ input }) => {

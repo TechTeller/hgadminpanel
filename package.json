@@ -23,6 +23,7 @@
     "@trpc/next": "10.0.0-proxy-beta.17",
     "@trpc/react": "10.0.0-proxy-beta.17",
     "@trpc/server": "10.0.0-proxy-beta.17",
+    "dayjs": "^1.11.6",
     "discord-markdown": "^2.5.1",
     "moment": "^2.29.4",
     "next": "12.3.1",
