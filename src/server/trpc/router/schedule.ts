@@ -1,14 +1,14 @@
-import { router, protectedProcedure } from "../trpc"
-import { z } from "zod"
-import { BOT_API_URL, jsonFetch } from "@/utils/trpc"
+import { router, protectedProcedure } from "../trpc";
+import { z } from "zod";
+import { BOT_API_URL, jsonFetch } from "@/utils/trpc";
 
 export const scheduleRouter = router({
   get: protectedProcedure.query(async () => {
-    return await jsonFetch(`${BOT_API_URL}/schedule/`, 'GET')
+    return await jsonFetch(`${BOT_API_URL}/schedule/`, "GET");
   }),
   update: protectedProcedure
-    .input(z.object({ streamTopic: z.string() }))
+    .input(z.object({ streamTopic: z.string(), streamTime: z.string() }))
     .mutation(async ({ input }) => {
-      return await jsonFetch(`${BOT_API_URL}/schedule`, 'PUT', input)
+      return await jsonFetch(`${BOT_API_URL}/schedule`, "PUT", input);
     }),
-})
+});

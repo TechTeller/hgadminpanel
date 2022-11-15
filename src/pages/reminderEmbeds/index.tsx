@@ -2,22 +2,21 @@ import AdminList from "@/components/AdminList";
 import Layout from "@/components/Layout";
 import { trpc } from "@/utils/trpc";
 
-const FollowUpAdminList = () => {
-  const res = trpc.followup.getAll.useQuery();
+const ReminderEmbedAdminList = () => {
+  const res = trpc.reminderEmbed.getAll.useQuery();
   return (
     <Layout>
       <AdminList
         columnProps={[
-          { fieldName: "title", headerName: "Title" },
+          { fieldName: "header", headerName: "Title" },
           { fieldName: "description", headerName: "Message" },
-          { fieldName: "tag", headerName: "Tag" },
         ]}
         rowData={res.data ?? []}
-        slug="followupMessages"
-        title="Follow Up Messages"
+        slug="reminderEmbeds"
+        title="Reminder Embeds"
       />
     </Layout>
   );
 };
 
-export default FollowUpAdminList;
+export default ReminderEmbedAdminList;

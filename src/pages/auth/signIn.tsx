@@ -1,7 +1,11 @@
-import { NextPageContext } from "next"
-import { getProviders, signIn, SessionProviderProps } from "next-auth/react"
+import { NextPageContext } from "next";
+import { getProviders, signIn, SessionProviderProps } from "next-auth/react";
 
-export default function SignIn({ providers }: { providers: SessionProviderProps }) {
+export default function SignIn({
+  providers,
+}: {
+  providers: SessionProviderProps;
+}) {
   return (
     <>
       {Object.values(providers).map((provider) => (
@@ -12,12 +16,12 @@ export default function SignIn({ providers }: { providers: SessionProviderProps 
         </div>
       ))}
     </>
-  )
+  );
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const providers = await getProviders()
+  const providers = await getProviders();
   return {
     props: { providers },
-  }
+  };
 }

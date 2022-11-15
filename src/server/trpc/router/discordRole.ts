@@ -1,32 +1,32 @@
-import { router, publicProcedure } from "../trpc"
-import { z } from "zod"
-import { DiscordUser } from "@prisma/client"
+import { router, publicProcedure } from "../trpc";
+import { z } from "zod";
+import { DiscordType } from "@prisma/client";
 
 export const discordRoleRouter = router({
-  hello: publicProcedure
-    .input(z.object({ text: z.string().nullish() }).nullish())
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input?.text ?? "world"}`,
-      }
-    }),
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.discordUser.findMany()
+    return await ctx.prisma.discordRole.findMany();
   }),
   getOne: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const { id } = input;
-      return await ctx.prisma.discordUser.findUnique({ where: { id } })
+      return await ctx.prisma.discordRole.findUnique({ where: { id } });
     }),
   upsertOne: publicProcedure
-    .input(z.object({ userId: z.string(), username: z.string(), roles: z.string().nullable() }))
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        snowflake: z.string(),
+        type: z.nativeEnum(DiscordType),
+      })
+    )
     .query(async ({ ctx, input }) => {
-      const { userId, username, ...rest } = input
-      const currentUser: DiscordUser | null = await ctx.prisma.discordUser.findFirst({ where: { userId, username } })
-      if (currentUser) {
-        return await ctx.prisma.discordUser.update({ where: { id: currentUser.id }, data: { ...rest } })
-      }
-      return await ctx.prisma.discordUser.create({ data: input })
-    })
-})
+      const { id, ...rest } = input;
+      return await ctx.prisma.discordRole.upsert({
+        where: { id },
+        create: { ...rest },
+        update: { ...rest },
+      });
+    }),
+});

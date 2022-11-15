@@ -1,33 +1,49 @@
-import { ChangeEvent, useState } from "react"
-import { useRouter } from "next/router"
-import { trpc } from "@/utils/trpc"
-import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
-import Link from "next/link"
-import Layout from "@/components/Layout"
-import StyledTextField from "@/components/StyledTextField"
+import { ChangeEvent, useState } from "react";
+import { NextPage } from "next";
+import { useRouter } from "next/router";
+import { trpc } from "@/utils/trpc";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Link from "next/link";
+import Layout from "@/components/Layout";
+import StyledTextField from "@/components/StyledTextField";
 
+const ReminderFormPage: NextPage = () => {
+  const router = useRouter();
+  const id = router.query.id as string;
+  const [channel, setChannel] = useState(0);
+  const [messageInterval, setMessageInterval] = useState(0);
+  const [embed, setEmbed] = useState(0);
 
-const ReminderFormPage = () => {
-  const router = useRouter()
-  const id = router.query.id as string
-  const [header, setHeader] = useState("")
-  const [description, setDescription] = useState("")
-
-  const res = trpc.channelReminder.findById.useQuery({ id }, {
-    onSuccess: (data) => {
-      const { header: dataHeader, description: dataDescription } = data
-      setHeader(dataHeader)
-      setDescription(dataDescription)
+  const res = trpc.channelReminder.findById.useQuery(
+    { id },
+    {
+      onSuccess: (data) => {
+        const {
+          channel: dataChannel,
+          message_interval: dataMessInt,
+          embed: dataEmbed,
+        } = data;
+        setChannel(dataChannel);
+        setMessageInterval(dataMessInt);
+        setEmbed(dataEmbed);
+      },
     }
-  })
+  );
 
-  const submitMutation = trpc.channelReminder.updateOne.useMutation({ onSuccess: () => res.refetch() })
+  const submitMutation = trpc.channelReminder.updateOne.useMutation({
+    onSuccess: () => res.refetch(),
+  });
 
   const handleSubmit = (event: ChangeEvent<any>) => {
-    event.preventDefault()
-    submitMutation.mutate({ id, header, description })
-  }
+    event.preventDefault();
+    submitMutation.mutate({
+      id,
+      channel,
+      message_interval: messageInterval,
+      embed,
+    });
+  };
 
   return (
     <Layout>
@@ -36,27 +52,43 @@ const ReminderFormPage = () => {
       </Box>
       <Box className="w-full p-4">
         <form onSubmit={handleSubmit}>
-          <Box className="flex flex-col flex-1 w-full p-4 bg-slate-600 gap-4">
+          <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
             <StyledTextField
-              label="Title"
-              value={header}
-              onChange={(event: ChangeEvent<any>) => setHeader(event.target.value)}
-              inputProps={{ 'aria-label': 'embed-header' }}
+              label="Channel"
+              value={channel}
+              onChange={(event: ChangeEvent<any>) =>
+                setChannel(event.target.value)
+              }
+              inputProps={{ "aria-label": "reminder-channel" }}
             />
             <StyledTextField
-              label="Message"
-              value={description}
-              onChange={(event: ChangeEvent<any>) => setDescription(event.target.value)}
+              label="Message Interval"
+              value={messageInterval}
+              onChange={(event: ChangeEvent<any>) =>
+                setMessageInterval(event.target.value)
+              }
               multiline
               rows={4}
-              inputProps={{ 'aria-label': 'embed-description' }}
+              inputProps={{ "aria-label": "reminder-message-interval" }}
             />
-            <Button type="submit" variant="contained">Save</Button>
+            <StyledTextField
+              label="Embed"
+              value={embed}
+              onChange={(event: ChangeEvent<any>) =>
+                setEmbed(event.target.value)
+              }
+              multiline
+              rows={4}
+              inputProps={{ "aria-label": "reminder-embed" }}
+            />
+            <Button type="submit" variant="contained">
+              Save
+            </Button>
           </Box>
         </form>
       </Box>
     </Layout>
-  )
-}
+  );
+};
 
-export default ReminderFormPage
+export default ReminderFormPage;

@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/server/db/client";
 import { env } from "@/env/server.mjs";
 
-const scopes = ['identify', 'guilds', 'guilds.members.read'].join(' ')
+const scopes = ["identify", "guilds", "guilds.members.read"].join(" ");
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session

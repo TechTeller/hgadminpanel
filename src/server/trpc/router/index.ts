@@ -1,9 +1,10 @@
 // src/server/trpc/router/index.ts
 import { router } from "../trpc";
 import { authRouter } from "./auth";
-import { channelReminderRouter } from "./channelReminder"
+import { channelReminderRouter } from "./channelReminder";
 import { discordRoleRouter } from "./discordRole";
 import { followupRouter } from "./followUp";
+import { reminderEmbedRouter } from "./reminderEmbed";
 import { scheduleRouter } from "./schedule";
 
 export const appRouter = router({
@@ -11,6 +12,7 @@ export const appRouter = router({
   channelReminder: channelReminderRouter,
   discordRole: discordRoleRouter,
   followup: followupRouter,
+  reminderEmbed: reminderEmbedRouter,
   schedule: scheduleRouter,
 });
 
