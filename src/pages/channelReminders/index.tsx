@@ -9,9 +9,9 @@ const ChannelReminderAdminList: NextPage = () => {
     <Layout>
       <AdminList
         columnProps={[
-          { fieldName: "channel", headerName: "Channel" },
+          { fieldName: "channelName", headerName: "Channel" },
           { fieldName: "message_interval", headerName: "Message Interval" },
-          { fieldName: "embed", headerName: "Embed" },
+          { fieldName: "embedName", headerName: "Embed" },
         ]}
         rowData={res.data ?? []}
         slug="channelReminders"

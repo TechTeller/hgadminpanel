@@ -40,9 +40,9 @@ const Layout = (props: LayoutProps) => {
           <div className="flex min-h-screen flex-col justify-center">
             <button
               className="rounded-md border border-black bg-slate-700 px-4 py-2 text-xl shadow-lg hover:bg-slate-600"
-              onClick={() => signIn()}
+              onClick={() => signIn("discord")}
             >
-              Please sign in
+              Please sign in with Discord
             </button>
           </div>
         )}
