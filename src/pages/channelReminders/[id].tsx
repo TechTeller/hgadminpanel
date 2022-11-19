@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-import StyledTextField from "@/components/StyledTextField";
+import TextField from "@mui/material/TextField";
 
 export interface Channel {
   type: string;
@@ -24,9 +24,9 @@ export interface Embed {
 const ReminderFormPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
-  const channelRef = createRef<HTMLInputElement>();
-  const intervalRef = createRef<HTMLInputElement>();
-  const embedRef = createRef<HTMLInputElement>();
+  const channelRef = createRef<any>();
+  const intervalRef = createRef<any>();
+  const embedRef = createRef<any>();
 
   const {
     data: reminderData,
@@ -52,7 +52,9 @@ const ReminderFormPage: NextPage = () => {
     submitMutation.mutate({
       id,
       channel_id: channelRef.current.value ?? reminderData?.channel_id,
-      message_interval: Number(intervalRef.current.value),
+      message_interval: intervalRef.current.value
+        ? Number(intervalRef.current.value)
+        : reminderData?.message_interval,
       embed_id: embedRef.current.value ?? reminderData?.embed_id,
     });
   };
@@ -69,7 +71,6 @@ const ReminderFormPage: NextPage = () => {
           <form onSubmit={handleSubmit}>
             <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
               <Autocomplete
-                disablePortal
                 ref={channelRef}
                 options={
                   channelData?.filter(
@@ -87,7 +88,7 @@ const ReminderFormPage: NextPage = () => {
                     channelRef.current.value = value?.discord_id ?? "";
                 }}
                 renderInput={(params) => (
-                  <StyledTextField
+                  <TextField
                     {...params}
                     label="Channel"
                     inputProps={{
@@ -96,26 +97,14 @@ const ReminderFormPage: NextPage = () => {
                     }}
                   />
                 )}
-                id="channel-autocomplete"
-                sx={{
-                  backgroundColor: "#334155",
-                  color: "#f1f5f9",
-                  "& #channel-autocomplete": {
-                    color: "#f1f5f9",
-                  },
-                  "& #channel-autocomplete-label": {
-                    color: "#f1f5f9",
-                  },
-                }}
               />
-              <StyledTextField
+              <TextField
                 inputRef={intervalRef}
                 label="Message Interval"
                 defaultValue={reminderData?.message_interval}
                 inputProps={{ "aria-label": "reminder-message-interval" }}
               />
               <Autocomplete
-                disablePortal
                 ref={embedRef}
                 options={embedData as Embed[]}
                 defaultValue={
@@ -127,7 +116,7 @@ const ReminderFormPage: NextPage = () => {
                     embedRef.current.value = value?.id ?? "";
                 }}
                 renderInput={(params) => (
-                  <StyledTextField
+                  <TextField
                     {...params}
                     label="Embed"
                     inputProps={{
@@ -136,17 +125,6 @@ const ReminderFormPage: NextPage = () => {
                     }}
                   />
                 )}
-                id="channel-autocomplete"
-                sx={{
-                  backgroundColor: "#334155",
-                  color: "#f1f5f9",
-                  "& #channel-autocomplete": {
-                    color: "#f1f5f9",
-                  },
-                  "& #channel-autocomplete-label": {
-                    color: "#f1f5f9",
-                  },
-                }}
               />
               <Button type="submit" variant="contained">
                 Save

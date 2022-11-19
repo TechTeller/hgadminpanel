@@ -2,12 +2,12 @@ import { ChangeEvent, createRef } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
+import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-import StyledTextField from "@/components/StyledTextField";
-import { Autocomplete } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 export interface Channel {
   type: string;
@@ -24,9 +24,9 @@ export interface Embed {
 const ReminderNewFormPage: NextPage = () => {
   const router = useRouter();
   const { pathname } = router;
-  const channelRef = createRef<HTMLInputElement>();
-  const intervalRef = createRef<HTMLInputElement>();
-  const embedRef = createRef<HTMLInputElement>();
+  const channelRef = createRef<any>();
+  const intervalRef = createRef<any>();
+  const embedRef = createRef<any>();
 
   const { data: channelData } = trpc.channelReminder.getChannels.useQuery();
   const { data: embedData } = trpc.reminderEmbed.getAll.useQuery();
@@ -56,7 +56,6 @@ const ReminderNewFormPage: NextPage = () => {
         <form onSubmit={handleSubmit}>
           <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
             <Autocomplete
-              disablePortal
               ref={channelRef}
               options={
                 channelData?.filter((c) => c.type === "GUILD_TEXT") as Channel[]
@@ -68,7 +67,7 @@ const ReminderNewFormPage: NextPage = () => {
                 }
               }}
               renderInput={(params) => (
-                <StyledTextField
+                <TextField
                   {...params}
                   label="Channel"
                   inputProps={{
@@ -77,25 +76,13 @@ const ReminderNewFormPage: NextPage = () => {
                   }}
                 />
               )}
-              id="channel-autocomplete"
-              sx={{
-                backgroundColor: "#334155",
-                color: "#f1f5f9",
-                "& #channel-autocomplete": {
-                  color: "#f1f5f9",
-                },
-                "& #channel-autocomplete-label": {
-                  color: "#f1f5f9",
-                },
-              }}
             />
-            <StyledTextField
+            <TextField
               inputRef={intervalRef}
               label="Message Interval"
               inputProps={{ "aria-label": "reminder-message-interval" }}
             />
             <Autocomplete
-              disablePortal
               ref={embedRef}
               options={embedData as Embed[]}
               getOptionLabel={(c) => c.header}
@@ -103,7 +90,7 @@ const ReminderNewFormPage: NextPage = () => {
                 if (embedRef.current) embedRef.current.value = value?.id ?? "";
               }}
               renderInput={(params) => (
-                <StyledTextField
+                <TextField
                   {...params}
                   label="Embed"
                   inputProps={{
@@ -112,17 +99,6 @@ const ReminderNewFormPage: NextPage = () => {
                   }}
                 />
               )}
-              id="channel-autocomplete"
-              sx={{
-                backgroundColor: "#334155",
-                color: "#f1f5f9",
-                "& #channel-autocomplete": {
-                  color: "#f1f5f9",
-                },
-                "& #channel-autocomplete-label": {
-                  color: "#f1f5f9",
-                },
-              }}
             />
             <Button type="submit" variant="contained">
               Save

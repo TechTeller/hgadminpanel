@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-import StyledTextField from "@/components/StyledTextField";
+import TextField from "@mui/material/TextField";
 
 const ReminderEmbedNewFormPage = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const ReminderEmbedNewFormPage = () => {
       <Box className="w-full p-4">
         <form onSubmit={handleSubmit}>
           <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
-            <StyledTextField
+            <TextField
               label="Title"
               value={header}
               onChange={(event: ChangeEvent<any>) =>
@@ -38,7 +38,7 @@ const ReminderEmbedNewFormPage = () => {
               }
               inputProps={{ "aria-label": "embed-header" }}
             />
-            <StyledTextField
+            <TextField
               label="Message"
               value={description}
               onChange={(event: ChangeEvent<any>) =>

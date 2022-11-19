@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-import StyledTextField from "@/components/StyledTextField";
+import TextField from "@mui/material/TextField";
 
 const FollowupNewFormPage = () => {
   const router = useRouter();
@@ -31,7 +31,7 @@ const FollowupNewFormPage = () => {
       <Box className="w-full p-4">
         <form onSubmit={handleSubmit}>
           <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
-            <StyledTextField
+            <TextField
               label="Title"
               value={title}
               onChange={(event: ChangeEvent<any>) =>
@@ -39,7 +39,7 @@ const FollowupNewFormPage = () => {
               }
               inputProps={{ "aria-label": "embed-title" }}
             />
-            <StyledTextField
+            <TextField
               label="Message"
               value={description}
               onChange={(event: ChangeEvent<any>) =>
@@ -49,7 +49,7 @@ const FollowupNewFormPage = () => {
               rows={4}
               inputProps={{ "aria-label": "embed-description" }}
             />
-            <StyledTextField
+            <TextField
               label="Tag"
               value={tag}
               onChange={(event: ChangeEvent<any>) => setTag(event.target.value)}
