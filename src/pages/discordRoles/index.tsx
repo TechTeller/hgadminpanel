@@ -11,7 +11,7 @@ const FollowUpAdminList: NextPage = () => {
         columnProps={[
           { fieldName: "name", headerName: "Name" },
           { fieldName: "snowflake", headerName: "Discord Snowflake" },
-          { fieldName: "type", headerName: "Is Role or User?" },
+          { fieldName: "type", headerName: "Type" },
         ]}
         rowData={res.data ?? []}
         slug="discordRoles"

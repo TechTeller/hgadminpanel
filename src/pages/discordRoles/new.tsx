@@ -29,7 +29,7 @@ const DiscordNewPage: NextPage = () => {
     submitMutation.mutate({
       name: nameRef.current.value,
       snowflake: snowflakeRef.current.value,
-      type: typeRef.current.value as DiscordType,
+      type: typeRef.current.value,
     });
   };
 
@@ -54,10 +54,10 @@ const DiscordNewPage: NextPage = () => {
             <Autocomplete
               disablePortal
               ref={typeRef}
-              options={["ROLE", "USER"]}
+              options={Object.keys(DiscordType)}
               onChange={(_e, value) => {
                 if (typeRef.current) {
-                  typeRef.current.value = value ?? "ROLE";
+                  typeRef.current.value = value;
                 }
               }}
               renderInput={(params) => (
@@ -70,17 +70,6 @@ const DiscordNewPage: NextPage = () => {
                   }}
                 />
               )}
-              id="styled-autocomplete"
-              sx={{
-                backgroundColor: "#334155",
-                color: "#f1f5f9",
-                "& #styled-autocomplete": {
-                  color: "#f1f5f9",
-                },
-                "& #styled-autocomplete-label": {
-                  color: "#f1f5f9",
-                },
-              }}
             />
             <Button type="submit" variant="contained">
               Save
