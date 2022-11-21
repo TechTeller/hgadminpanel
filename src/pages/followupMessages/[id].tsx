@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, createRef } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
 import Box from "@mui/material/Box";
@@ -10,33 +10,28 @@ import TextField from "@mui/material/TextField";
 const FollowupFormPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tag, setTag] = useState("");
 
-  const res = trpc.followup.findById.useQuery(
-    { id },
-    {
-      onSuccess: (data) => {
-        const {
-          title: dataTitle,
-          description: dataDescription,
-          tag: dataTag,
-        } = data;
-        setTitle(dataTitle);
-        setDescription(dataDescription);
-        setTag(dataTag);
-      },
-    }
-  );
+  const titleRef = createRef<any>();
+  const descriptionRef = createRef<any>();
+  const tagRef = createRef<any>();
+
+  const { data, refetch } = trpc.followup.findById.useQuery({ id });
 
   const submitMutation = trpc.followup.updateOne.useMutation({
-    onSuccess: () => res.refetch(),
+    onSuccess: () => refetch(),
   });
 
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    submitMutation.mutate({ id, title, description, tag });
+    if (!titleRef.current || !descriptionRef.current || !tagRef.current) {
+      return;
+    }
+    submitMutation.mutate({
+      id,
+      title: titleRef.current.value,
+      description: descriptionRef.current.value,
+      tag: tagRef.current.value,
+    });
   };
 
   return (
@@ -48,27 +43,23 @@ const FollowupFormPage = () => {
         <form onSubmit={handleSubmit}>
           <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
             <TextField
+              inputRef={titleRef}
               label="Title"
-              value={title}
-              onChange={(event: ChangeEvent<any>) =>
-                setTitle(event.target.value)
-              }
+              defaultValue={data?.title}
               inputProps={{ "aria-label": "embed-header" }}
             />
             <TextField
+              inputRef={descriptionRef}
               label="Message"
-              value={description}
-              onChange={(event: ChangeEvent<any>) =>
-                setDescription(event.target.value)
-              }
+              defaultValue={data?.description}
               multiline
               rows={4}
               inputProps={{ "aria-label": "embed-description" }}
             />
             <TextField
+              inputRef={tagRef}
               label="Tag"
-              value={tag}
-              onChange={(event: ChangeEvent<any>) => setTag(event.target.value)}
+              defaultValue={data?.tag}
               inputProps={{ "aria-label": "embed-tag" }}
             />
             <Button type="submit" variant="contained">

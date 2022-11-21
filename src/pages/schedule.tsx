@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, createRef, useState } from "react";
 import type { NextPage } from "next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -14,7 +14,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 Settings.defaultZone = "America/Chicago";
 
 const ScheduleFormPage: NextPage = () => {
-  const [streamTopic, setStreamTopic] = useState("TBD");
+  const topicRef = createRef<any>();
 
   const getNextStreamDatetime = () => {
     const d = DateTime.now();
@@ -38,22 +38,24 @@ const ScheduleFormPage: NextPage = () => {
   // the first prop here is literal undefined
   // so that we can use the second prop that uses callbacks
   // this query doesn't need input otherwise
-  const res = trpc.schedule.get.useQuery(undefined, {
+  const { data, refetch } = trpc.schedule.get.useQuery(undefined, {
     onSuccess: (data) => {
-      const { topic: dataStreamTopic, time: dataStreamTime } = data;
-      setStreamTopic(dataStreamTopic.value);
+      const { time: dataStreamTime } = data;
       setStreamTime(DateTime.fromSeconds(Number(dataStreamTime.value)));
     },
   });
 
   const submitMutation = trpc.schedule.update.useMutation({
-    onSuccess: () => res.refetch(),
+    onSuccess: () => refetch(),
   });
 
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!topicRef.current) {
+      return;
+    }
     submitMutation.mutate({
-      streamTopic,
+      streamTopic: topicRef.current.value,
       streamTime: streamTime.toSeconds().toString(),
     });
   };
@@ -67,11 +69,9 @@ const ScheduleFormPage: NextPage = () => {
         <form onSubmit={handleSubmit}>
           <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
             <TextField
+              inputRef={topicRef}
               label="Stream Topic"
-              value={streamTopic}
-              onChange={(event: ChangeEvent<any>) =>
-                setStreamTopic(event.target.value)
-              }
+              defaultValue={data?.topic.value}
               inputProps={{ "aria-label": "embed-header" }}
             />
             <LocalizationProvider dateAdapter={AdapterLuxon}>

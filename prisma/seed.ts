@@ -1,33 +1,33 @@
 import { DiscordType, PrismaClient } from "@prisma/client";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import { env } from "../src/env/server.mjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  let admin_snowflake = "";
-  let botdev_snowflake = "";
-  if (process.env.NODE_ENV === "production") {
+  // default for development (currently using evlrobinson's personal test server role ids)
+  let admin_snowflake = "1024706941446013010";
+  let botdev_snowflake = "1043835717933080666";
+  if (env.NODE_ENV === "production") {
     admin_snowflake = "550075400286371894";
     botdev_snowflake = "694292933293244476";
-  } else {
-    admin_snowflake = "1024706941446013010";
-    botdev_snowflake = "1043835717933080666";
   }
-  const admin = await prisma.discordRole.create({
-    data: {
+  const admin = await prisma.discordRole.upsert({
+    where: { id: "1" },
+    create: {
       name: "Admin",
       snowflake: admin_snowflake,
       type: DiscordType.ROLE,
     },
+    update: {},
   });
-  const botdev = await prisma.discordRole.create({
-    data: {
+  const botdev = await prisma.discordRole.upsert({
+    where: { id: "2" },
+    create: {
       name: "Bot Dev",
       snowflake: botdev_snowflake,
       type: DiscordType.ROLE,
     },
+    update: {},
   });
   console.log({ admin, botdev });
 }

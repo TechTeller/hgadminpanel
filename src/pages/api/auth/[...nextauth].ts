@@ -12,9 +12,9 @@ import { DiscordType } from "@prisma/client";
 const scopes = ["identify", "guilds", "guilds.members.read"].join(" ");
 
 export const authOptions: NextAuthOptions = {
-  // Include user.id on session
   callbacks: {
     session({ session, user }) {
+      // Include user.id on session
       if (session.user) {
         session.user.id = user.id;
       }

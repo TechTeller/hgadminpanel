@@ -13,6 +13,7 @@ import { DiscordType } from "@prisma/client";
 const DiscordNewPage: NextPage = () => {
   const router = useRouter();
   const { pathname } = router;
+
   const nameRef = createRef<any>();
   const snowflakeRef = createRef<any>();
   const typeRef = createRef<any>();
