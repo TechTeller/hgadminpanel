@@ -37,7 +37,7 @@ const DiscordNewPage: NextPage = () => {
   return (
     <Layout>
       <Box className="m-2 self-start text-sm">
-        <Link href="/channelReminders">{"< Back to list page"}</Link>
+        <Link href="/discordRoles">{"< Back to list page"}</Link>
       </Box>
       <Box className="w-full p-4">
         <form onSubmit={handleSubmit}>

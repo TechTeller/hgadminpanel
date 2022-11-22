@@ -24,7 +24,7 @@ const Home: NextPage = () => {
           <div className="flex flex-col bg-slate-600">
             <StyledLink slug="channelReminders/" title="Channel Reminders" />
             <StyledLink slug="reminderEmbeds/" title="Reminder Embeds" />
-            <StyledLink slug="followUpMessages/" title="Follow Up Messages" />
+            <StyledLink slug="followupMessages/" title="Follow Up Messages" />
             <StyledLink slug="schedule/" title="Stream Schedule" />
             <StyledLink slug="discordRoles/" title="Discord Roles" />
           </div>
