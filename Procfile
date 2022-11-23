@@ -1,1 +1,1 @@
-web: sh -c 'next build && next start'
+web: npm run dev
