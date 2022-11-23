@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
 import Box from "@mui/material/Box";
@@ -11,8 +11,8 @@ const ReminderEmbedFormPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const headerRef = createRef<any>();
-  const descriptionRef = createRef<any>();
+  const headerRef = useRef("");
+  const descriptionRef = useRef("");
 
   const { data, refetch } = trpc.reminderEmbed.findById.useQuery({ id });
 
@@ -20,15 +20,13 @@ const ReminderEmbedFormPage = () => {
     onSuccess: () => refetch(),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!headerRef.current || !descriptionRef.current) {
-      return;
-    }
     submitMutation.mutate({
       id,
-      header: headerRef.current.value,
-      description: descriptionRef.current.value,
+      header: headerRef.current,
+      description: descriptionRef.current,
     });
   };
 

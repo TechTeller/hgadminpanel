@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
@@ -24,9 +24,9 @@ export interface Embed {
 const ReminderFormPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
-  const channelRef = createRef<any>();
-  const intervalRef = createRef<any>();
-  const embedRef = createRef<any>();
+  const channelRef = useRef("");
+  const intervalRef = useRef("1");
+  const embedRef = useRef("");
 
   const {
     data: reminderData,
@@ -44,18 +44,16 @@ const ReminderFormPage: NextPage = () => {
     onSuccess: () => refetch(),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!channelRef.current || !embedRef.current || !intervalRef.current) {
-      return;
-    }
     submitMutation.mutate({
       id,
-      channel_id: channelRef.current.value ?? reminderData?.channel_id,
-      message_interval: intervalRef.current.value
-        ? Number(intervalRef.current.value)
+      channel_id: channelRef.current ?? reminderData?.channel_id,
+      message_interval: intervalRef.current
+        ? Number(intervalRef.current)
         : reminderData?.message_interval,
-      embed_id: embedRef.current.value ?? reminderData?.embed_id,
+      embed_id: embedRef.current ?? reminderData?.embed_id,
     });
   };
 
@@ -85,7 +83,7 @@ const ReminderFormPage: NextPage = () => {
                 getOptionLabel={(c) => c.name}
                 onChange={(_e, value) => {
                   if (channelRef.current)
-                    channelRef.current.value = value?.discord_id ?? "";
+                    channelRef.current = value?.discord_id ?? "";
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -100,7 +98,7 @@ const ReminderFormPage: NextPage = () => {
               />
               <TextField
                 inputRef={intervalRef}
-                label="Message Interval"
+                label="Message Interval (minimum 1)"
                 defaultValue={reminderData?.message_interval}
                 inputProps={{ "aria-label": "reminder-message-interval" }}
               />
@@ -112,8 +110,7 @@ const ReminderFormPage: NextPage = () => {
                 }
                 getOptionLabel={(e) => e.header}
                 onChange={(_e, value) => {
-                  if (embedRef.current)
-                    embedRef.current.value = value?.id ?? "";
+                  if (embedRef.current) embedRef.current = value?.id ?? "";
                 }}
                 renderInput={(params) => (
                   <TextField

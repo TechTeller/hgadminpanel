@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
 import Box from "@mui/material/Box";
@@ -11,21 +11,19 @@ const ReminderEmbedNewFormPage = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  const headerRef = createRef<any>();
-  const descriptionRef = createRef<any>();
+  const headerRef = useRef("");
+  const descriptionRef = useRef("");
 
   const submitMutation = trpc.reminderEmbed.createOne.useMutation({
     onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/"),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!headerRef.current || !descriptionRef.current) {
-      return;
-    }
     submitMutation.mutate({
-      header: headerRef.current.value,
-      description: descriptionRef.current.value,
+      header: headerRef.current,
+      description: descriptionRef.current,
     });
   };
 

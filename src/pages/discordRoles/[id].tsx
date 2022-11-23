@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
@@ -14,9 +14,9 @@ const DiscordIdPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const nameRef = createRef<any>();
-  const snowflakeRef = createRef<any>();
-  const typeRef = createRef<any>();
+  const nameRef = useRef("");
+  const snowflakeRef = useRef("");
+  const typeRef = useRef<DiscordType>(DiscordType.ROLE);
 
   const { data, isLoading, refetch } = trpc.discordRole.findById.useQuery({
     id,
@@ -26,23 +26,21 @@ const DiscordIdPage: NextPage = () => {
     onSuccess: () => refetch(),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!nameRef.current || !snowflakeRef.current || !typeRef.current) {
-      return;
-    }
     submitMutation.mutate({
       id,
-      name: nameRef.current.value,
-      snowflake: snowflakeRef.current.value,
-      type: typeRef.current.value,
+      name: nameRef.current,
+      snowflake: snowflakeRef.current,
+      type: typeRef.current,
     });
   };
 
   return (
     <Layout>
       <Box className="m-2 self-start text-sm">
-        <Link href="/channelReminders">{"< Back to list page"}</Link>
+        <Link href="/discordRoles">{"< Back to list page"}</Link>
       </Box>
       {isLoading ? (
         <Box>Loading...</Box>
@@ -67,11 +65,9 @@ const DiscordIdPage: NextPage = () => {
                 ref={typeRef}
                 options={Object.keys(DiscordType)}
                 defaultValue={data?.type}
-                onChange={(_e, value) => {
-                  if (typeRef.current) {
-                    typeRef.current.value = value;
-                  }
-                }}
+                onChange={(_e, value) =>
+                  (typeRef.current = value as DiscordType)
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}

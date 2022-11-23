@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import type { NextPage } from "next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -14,7 +14,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 Settings.defaultZone = "America/Chicago";
 
 const ScheduleFormPage: NextPage = () => {
-  const topicRef = createRef<any>();
+  const topicRef = useRef("");
 
   const getNextStreamDatetime = () => {
     const d = DateTime.now();
@@ -49,13 +49,11 @@ const ScheduleFormPage: NextPage = () => {
     onSuccess: () => refetch(),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!topicRef.current) {
-      return;
-    }
     submitMutation.mutate({
-      streamTopic: topicRef.current.value,
+      streamTopic: topicRef.current,
       streamTime: streamTime.toSeconds().toString(),
     });
   };

@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
@@ -14,30 +14,28 @@ const DiscordNewPage: NextPage = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  const nameRef = createRef<any>();
-  const snowflakeRef = createRef<any>();
-  const typeRef = createRef<any>();
+  const nameRef = useRef("");
+  const snowflakeRef = useRef("");
+  const typeRef = useRef<DiscordType>(DiscordType.ROLE);
 
   const submitMutation = trpc.discordRole.createOne.useMutation({
     onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/"),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!nameRef.current || !snowflakeRef.current || !typeRef.current) {
-      return;
-    }
     submitMutation.mutate({
-      name: nameRef.current.value,
-      snowflake: snowflakeRef.current.value,
-      type: typeRef.current.value,
+      name: nameRef.current,
+      snowflake: snowflakeRef.current,
+      type: typeRef.current as DiscordType,
     });
   };
 
   return (
     <Layout>
       <Box className="m-2 self-start text-sm">
-        <Link href="/channelReminders">{"< Back to list page"}</Link>
+        <Link href="/discordRoles">{"< Back to list page"}</Link>
       </Box>
       <Box className="w-full p-4">
         <form onSubmit={handleSubmit}>
@@ -56,11 +54,7 @@ const DiscordNewPage: NextPage = () => {
               disablePortal
               ref={typeRef}
               options={Object.keys(DiscordType)}
-              onChange={(_e, value) => {
-                if (typeRef.current) {
-                  typeRef.current.value = value;
-                }
-              }}
+              onChange={(_e, value) => (typeRef.current = value as DiscordType)}
               renderInput={(params) => (
                 <TextField
                   {...params}

@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
           where: { type: DiscordType.USER },
           select: { snowflake: true },
         });
-        for (let user of dbUsers) {
+        for (const user of dbUsers) {
           if (user.snowflake === account?.providerAccountId)
             isAllowedToSignIn = true;
         }
@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
           "GET"
         );
         const dataRoles = data?.roles ?? [];
-        for (let role of dbRoles) {
+        for (const role of dbRoles) {
           if (dataRoles.includes(role.snowflake)) {
             isAllowedToSignIn = true;
           }

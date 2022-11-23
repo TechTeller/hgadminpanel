@@ -1,4 +1,4 @@
-import { ChangeEvent, createRef } from "react";
+import { ChangeEvent, useRef } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
@@ -24,9 +24,9 @@ export interface Embed {
 const ReminderNewFormPage: NextPage = () => {
   const router = useRouter();
   const { pathname } = router;
-  const channelRef = createRef<any>();
-  const intervalRef = createRef<any>();
-  const embedRef = createRef<any>();
+  const channelRef = useRef("");
+  const intervalRef = useRef("");
+  const embedRef = useRef("");
 
   const { data: channelData } = trpc.channelReminder.getChannels.useQuery();
   const { data: embedData } = trpc.reminderEmbed.getAll.useQuery();
@@ -35,15 +35,13 @@ const ReminderNewFormPage: NextPage = () => {
     onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/"),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!channelRef.current || !embedRef.current || !intervalRef.current) {
-      return;
-    }
     submitMutation.mutate({
-      channel_id: channelRef.current.value,
-      message_interval: Number(intervalRef.current.value),
-      embed_id: embedRef.current.value,
+      channel_id: channelRef.current,
+      message_interval: Number(intervalRef.current),
+      embed_id: embedRef.current,
     });
   };
 
@@ -61,11 +59,9 @@ const ReminderNewFormPage: NextPage = () => {
                 channelData?.filter((c) => c.type === "GUILD_TEXT") as Channel[]
               }
               getOptionLabel={(c) => c.name}
-              onChange={(_e, value) => {
-                if (channelRef.current) {
-                  channelRef.current.value = value?.discord_id ?? "";
-                }
-              }}
+              onChange={(_e, value) =>
+                (channelRef.current = value?.discord_id ?? "")
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -86,9 +82,7 @@ const ReminderNewFormPage: NextPage = () => {
               ref={embedRef}
               options={embedData as Embed[]}
               getOptionLabel={(c) => c.header}
-              onChange={(_e, value) => {
-                if (embedRef.current) embedRef.current.value = value?.id ?? "";
-              }}
+              onChange={(_e, value) => (embedRef.current = value?.id ?? "")}
               renderInput={(params) => (
                 <TextField
                   {...params}

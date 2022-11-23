@@ -6,12 +6,16 @@ export const followupRouter = router({
   getAll: protectedProcedure.query(async () => {
     return await jsonFetch(`${BOT_API_URL}/followups/`, "GET");
   }),
+  getEvents: protectedProcedure.query(async () => {
+    return await jsonFetch(`${BOT_API_URL}/events/`, "GET");
+  }),
   createOne: protectedProcedure
     .input(
       z.object({
         title: z.string(),
         description: z.string(),
-        tag: z.string(),
+        event_id: z.string(),
+        active: z.boolean(),
       })
     )
     .mutation(async ({ input }) => {
@@ -23,7 +27,8 @@ export const followupRouter = router({
         id: z.string(),
         title: z.string(),
         description: z.string(),
-        tag: z.string(),
+        event_id: z.string(),
+        active: z.boolean(),
       })
     )
     .mutation(async ({ input }) => {

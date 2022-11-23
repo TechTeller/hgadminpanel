@@ -10,6 +10,7 @@ export interface ColumnProps {
 
 export interface AdminListProps {
   columnProps: ColumnProps[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rowData: any[];
   slug: string;
   title: string;
@@ -17,9 +18,10 @@ export interface AdminListProps {
 
 const constructColumns = (columnData: ColumnProps[], slug: string) => {
   const colDef: GridColDef[] = [];
-  const firstItem = true;
+  let firstItem = true;
   for (const item of columnData) {
     const { fieldName, headerName } = item;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let col: any = {
       field: fieldName,
       headerName,
@@ -30,24 +32,27 @@ const constructColumns = (columnData: ColumnProps[], slug: string) => {
         return (
           <Link
             href={`/${slug}/${params.row.id}`}
-            className="hover:bg-slate-400"
+            className="w-full hover:bg-slate-400"
           >
-            {params.value}
+            {params.value ?? ""}
           </Link>
         );
       };
       const cellClassName = "hover:bg-slate-300 hover:text-sky-600";
       col = { ...col, renderCell, cellClassName };
+      firstItem = false;
     }
     colDef.push(col);
   }
   return colDef;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const constructRows = (columnData: ColumnProps[], rowsData: any[]) => {
-  const rows: any[] = [];
+  const rows = [];
   console.log("raw data", rowsData);
   for (const data of rowsData) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row: any = { id: data.id };
     for (const item of columnData) {
       const { fieldName } = item;
