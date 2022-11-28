@@ -1,6 +1,5 @@
 import { ChangeEvent, useRef, useState } from "react";
 import type { NextPage } from "next";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
@@ -60,12 +59,12 @@ const ScheduleFormPage: NextPage = () => {
 
   return (
     <Layout>
-      <Box className="m-2 self-start text-sm">
+      <div className="m-2 self-start text-sm">
         <Link href="/">{"< Back to main page"}</Link>
-      </Box>
-      <Box className="w-full p-4">
+      </div>
+      <div className="w-full p-4">
         <form onSubmit={handleSubmit}>
-          <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
+          <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
             <TextField
               inputRef={topicRef}
               label="Stream Topic"
@@ -83,9 +82,9 @@ const ScheduleFormPage: NextPage = () => {
             <Button type="submit" variant="contained">
               Save
             </Button>
-          </Box>
+          </div>
         </form>
-      </Box>
+      </div>
     </Layout>
   );
 };

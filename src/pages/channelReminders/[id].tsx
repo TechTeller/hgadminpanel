@@ -3,7 +3,6 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
 import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
@@ -59,15 +58,15 @@ const ReminderFormPage: NextPage = () => {
 
   return (
     <Layout>
-      <Box className="m-2 self-start text-sm">
+      <div className="m-2 self-start text-sm">
         <Link href="/channelReminders">{"< Back to list page"}</Link>
-      </Box>
+      </div>
       {reminderLoading || channelLoading || embedLoading ? (
-        <Box>Loading...</Box>
+        <div>Loading...</div>
       ) : (
-        <Box className="w-full p-4">
+        <div className="w-full p-4">
           <form onSubmit={handleSubmit}>
-            <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
+            <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
               <Autocomplete
                 ref={channelRef}
                 options={
@@ -126,9 +125,9 @@ const ReminderFormPage: NextPage = () => {
               <Button type="submit" variant="contained">
                 Save
               </Button>
-            </Box>
+            </div>
           </form>
-        </Box>
+        </div>
       )}
     </Layout>
   );

@@ -1,7 +1,6 @@
 import { ChangeEvent, useRef } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@/utils/trpc";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
@@ -32,12 +31,12 @@ const ReminderEmbedFormPage = () => {
 
   return (
     <Layout>
-      <Box className="m-2 self-start text-sm">
+      <div className="m-2 self-start text-sm">
         <Link href="/reminderEmbeds">{"< Back to list page"}</Link>
-      </Box>
-      <Box className="w-full p-4">
+      </div>
+      <div className="w-full p-4">
         <form onSubmit={handleSubmit}>
-          <Box className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
+          <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
             <TextField
               inputRef={headerRef}
               label="Title"
@@ -55,9 +54,9 @@ const ReminderEmbedFormPage = () => {
             <Button type="submit" variant="contained">
               Save
             </Button>
-          </Box>
+          </div>
         </form>
-      </Box>
+      </div>
     </Layout>
   );
 };

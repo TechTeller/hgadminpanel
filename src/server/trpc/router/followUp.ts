@@ -2,10 +2,36 @@ import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { BOT_API_URL, jsonFetch } from "@/utils/trpc";
 
+export interface InitialFollowup {
+  id: string;
+  title: string;
+  description: string;
+  scheduled_events: {
+    title: string;
+  };
+  active: boolean;
+}
+
 export const followupRouter = router({
-  getAll: protectedProcedure.query(async () => {
-    return await jsonFetch(`${BOT_API_URL}/followups/`, "GET");
-  }),
+  getAll: protectedProcedure
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          description: z.string(),
+          eventName: z.string(),
+          active: z.boolean(),
+        })
+      )
+    )
+    .query(async () => {
+      const json = await jsonFetch(`${BOT_API_URL}/followups/`, "GET");
+      return json.map((item: InitialFollowup) => {
+        const { scheduled_events, ...rest } = item;
+        return { eventName: scheduled_events.title, ...rest };
+      });
+    }),
   getEvents: protectedProcedure.query(async () => {
     return await jsonFetch(`${BOT_API_URL}/events/`, "GET");
   }),
