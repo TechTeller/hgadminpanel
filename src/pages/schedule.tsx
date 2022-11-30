@@ -40,7 +40,10 @@ const ScheduleFormPage: NextPage = () => {
   const { data, refetch } = trpc.schedule.get.useQuery(undefined, {
     onSuccess: (data) => {
       const { time: dataStreamTime } = data;
-      setStreamTime(DateTime.fromSeconds(Number(dataStreamTime.value)));
+      const prevStreamTime = DateTime.fromSeconds(Number(dataStreamTime.value));
+      if (prevStreamTime >= DateTime.now()) {
+        setStreamTime(prevStreamTime)
+      }
     },
   });
 
@@ -77,6 +80,7 @@ const ScheduleFormPage: NextPage = () => {
                 label="Stream Date and Time (Times are set to US Central Time)"
                 value={streamTime}
                 onChange={(newValue) => setStreamTime(newValue as DateTime)}
+                inputFormat="DDDD, T ZZZZ"
               />
             </LocalizationProvider>
             <Button type="submit" variant="contained">

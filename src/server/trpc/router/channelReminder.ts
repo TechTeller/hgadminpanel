@@ -1,6 +1,9 @@
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import { BOT_API_URL, jsonFetch } from "@/utils/trpc";
+import { jsonFetch } from "@/utils/trpc";
+import { env } from "@/env/server.mjs";
+
+const { BOT_API_URL } = env;
 
 export interface InitialReminder {
   id: string;

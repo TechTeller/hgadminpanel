@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/server/db/client";
 import { env } from "@/env/server.mjs";
 
-import { BOT_API_URL, jsonFetch } from "@/utils/trpc";
+import { jsonFetch } from "@/utils/trpc";
 import { DiscordType } from "@prisma/client";
 
 const scopes = ["identify", "guilds", "guilds.members.read"].join(" ");
@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
           select: { snowflake: true },
         });
         const data = await jsonFetch(
-          `${BOT_API_URL}/verify/${account?.providerAccountId}`,
+          `${env.BOT_API_URL}/verify/${account?.providerAccountId}`,
           "GET"
         );
         const dataRoles = data?.roles ?? [];
