@@ -4,8 +4,9 @@ import { createTRPCNext } from "@trpc/next";
 import { TRPCError } from "@trpc/server"
 import type { AppRouter } from "@/server/trpc/router";
 import superjson from "superjson";
+import { env } from "@/env/server.mjs";
 
-export const BOT_API_URL = "http://localhost:2218/api/admin"
+export const BOT_API_URL = env.BOT_API_URL;
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
