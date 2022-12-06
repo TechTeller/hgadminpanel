@@ -1,2 +1,2 @@
 web: npm run start
-release: npx prisma db push
+release: ./release-tasks.sh
