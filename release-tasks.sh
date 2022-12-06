@@ -1,2 +1,2 @@
 npx prisma db push
-npm run prod-seed
+npx prisma db seed
