@@ -1,2 +1,2 @@
 npx prisma db push
-npx prisma db seed
+npx tsx prisma/seed.ts
