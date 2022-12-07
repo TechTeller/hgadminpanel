@@ -10,8 +10,8 @@ const ReminderEmbedFormPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const headerRef = useRef("");
-  const descriptionRef = useRef("");
+  const headerRef = useRef<HTMLInputElement>();
+  const descriptionRef = useRef<HTMLInputElement>();
 
   const { data, refetch } = trpc.reminderEmbed.findById.useQuery({ id });
 
@@ -22,10 +22,13 @@ const ReminderEmbedFormPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!headerRef.current || !descriptionRef.current) {
+      return;
+    }
     submitMutation.mutate({
       id,
-      header: headerRef.current,
-      description: descriptionRef.current,
+      header: headerRef.current.value,
+      description: descriptionRef.current.value,
     });
   };
 

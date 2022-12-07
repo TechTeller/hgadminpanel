@@ -10,8 +10,8 @@ const ReminderEmbedNewFormPage = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  const headerRef = useRef("");
-  const descriptionRef = useRef("");
+  const headerRef = useRef<HTMLInputElement>();
+  const descriptionRef = useRef<HTMLInputElement>();
 
   const submitMutation = trpc.reminderEmbed.createOne.useMutation({
     onSuccess: () => router.push(`/${pathname.split("/")[1]}` ?? "/"),
@@ -20,9 +20,12 @@ const ReminderEmbedNewFormPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!headerRef.current || !descriptionRef.current) {
+      return;
+    }
     submitMutation.mutate({
-      header: headerRef.current,
-      description: descriptionRef.current,
+      header: headerRef.current.value,
+      description: descriptionRef.current.value,
     });
   };
 

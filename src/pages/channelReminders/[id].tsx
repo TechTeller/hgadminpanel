@@ -24,7 +24,7 @@ const ReminderFormPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
   const channelRef = useRef("");
-  const intervalRef = useRef("1");
+  const intervalRef = useRef<HTMLInputElement>();
   const embedRef = useRef("");
 
   const {
@@ -50,7 +50,7 @@ const ReminderFormPage: NextPage = () => {
       id,
       channel_id: channelRef.current ?? reminderData?.channel_id,
       message_interval: intervalRef.current
-        ? Number(intervalRef.current)
+        ? Number(intervalRef.current.value)
         : reminderData?.message_interval,
       embed_id: embedRef.current ?? reminderData?.embed_id,
     });
@@ -80,10 +80,6 @@ const ReminderFormPage: NextPage = () => {
                   )[0]
                 }
                 getOptionLabel={(c) => c.name}
-                onChange={(_e, value) => {
-                  if (channelRef.current)
-                    channelRef.current = value?.discord_id ?? "";
-                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -108,9 +104,6 @@ const ReminderFormPage: NextPage = () => {
                   embedData?.filter((e) => e.id === reminderData?.embed_id)[0]
                 }
                 getOptionLabel={(e) => e.header}
-                onChange={(_e, value) => {
-                  if (embedRef.current) embedRef.current = value?.id ?? "";
-                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}

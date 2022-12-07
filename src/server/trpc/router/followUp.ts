@@ -9,10 +9,14 @@ export interface InitialFollowup {
   id: string;
   title: string;
   description: string;
+  active: boolean;
+  tag: string;
   scheduled_events: {
     title: string;
-  };
-  active: boolean;
+  } | null;
+  scheduled_event_followup_settings: { 
+    listening_time: number;
+  }| null;
 }
 
 export const followupRouter = router({
@@ -23,16 +27,22 @@ export const followupRouter = router({
           id: z.string(),
           title: z.string(),
           description: z.string(),
-          eventName: z.string(),
           active: z.boolean(),
+          listeningTime: z.number(),
+          eventName: z.string().optional(),
+          tag: z.string().optional(),
         })
       )
     )
     .query(async () => {
       const json = await jsonFetch(`${BOT_API_URL}/followups/`, "GET");
       return json.map((item: InitialFollowup) => {
-        const { scheduled_events, ...rest } = item;
-        return { eventName: scheduled_events.title, ...rest };
+        const { scheduled_events, tag, scheduled_event_followup_settings, ...rest } = item;
+        return { 
+          eventName: scheduled_events?.title ?? tag, 
+          listeningTime: scheduled_event_followup_settings?.listening_time ?? 0,
+          ...rest
+        };
       });
     }),
   getEvents: protectedProcedure.query(async () => {
@@ -43,8 +53,10 @@ export const followupRouter = router({
       z.object({
         title: z.string(),
         description: z.string(),
-        event_id: z.string(),
         active: z.boolean(),
+        listening_time: z.number(),
+        event_id: z.string().optional(),
+        tag: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -56,8 +68,10 @@ export const followupRouter = router({
         id: z.string(),
         title: z.string(),
         description: z.string(),
-        event_id: z.string(),
         active: z.boolean(),
+        listening_time: z.number(),
+        event_id: z.string().optional(),
+        tag: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {

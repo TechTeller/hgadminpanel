@@ -18,9 +18,11 @@ const FollowupNewFormPage = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  const titleRef = useRef("");
-  const descriptionRef = useRef("");
+  const titleRef = useRef<HTMLInputElement>();
+  const descriptionRef = useRef<HTMLInputElement>();
+  const intervalRef = useRef<HTMLInputElement>();
   const eventRef = useRef("");
+  const tagRef = useRef<HTMLInputElement>();
   const [active, setActive] = useState(true);
 
   const { data: eventData, isLoading: eventLoading } =
@@ -33,10 +35,15 @@ const FollowupNewFormPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!titleRef.current || !descriptionRef.current || !tagRef.current || !intervalRef.current) {
+      return;
+    }
     submitMutation.mutate({
-      title: titleRef.current,
-      description: descriptionRef.current,
+      title: titleRef.current.value,
+      description: descriptionRef.current.value,
+      listening_time: Number(intervalRef.current.value),
       event_id: eventRef.current,
+      tag: tagRef.current.value,
       active,
     });
   };
@@ -68,7 +75,6 @@ const FollowupNewFormPage = () => {
                 ref={eventRef}
                 options={eventData as Event[]}
                 getOptionLabel={(e) => e.title}
-                onChange={(_e, value) => (eventRef.current = value?.id ?? "")}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -79,6 +85,16 @@ const FollowupNewFormPage = () => {
                     }}
                   />
                 )}
+              />
+              <TextField
+                inputRef={tagRef}
+                label="Tag"
+                inputProps={{ "aria-label": "followup-tag" }}
+              />
+              <TextField
+                inputRef={intervalRef}
+                label="Listening Time"
+                inputProps={{ "aria-label": "followup-listening-time" }}
               />
               <FormControlLabel
                 label="Is Active"

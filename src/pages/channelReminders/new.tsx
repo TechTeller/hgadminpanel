@@ -24,7 +24,7 @@ const ReminderNewFormPage: NextPage = () => {
   const router = useRouter();
   const { pathname } = router;
   const channelRef = useRef("");
-  const intervalRef = useRef("");
+  const intervalRef = useRef<HTMLInputElement>();
   const embedRef = useRef("");
 
   const { data: channelData } = trpc.channelReminder.getChannels.useQuery();
@@ -37,9 +37,12 @@ const ReminderNewFormPage: NextPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!intervalRef.current) {
+      return;
+    }
     submitMutation.mutate({
       channel_id: channelRef.current,
-      message_interval: Number(intervalRef.current),
+      message_interval: Number(intervalRef.current.value),
       embed_id: embedRef.current,
     });
   };
@@ -58,9 +61,6 @@ const ReminderNewFormPage: NextPage = () => {
                 channelData?.filter((c) => c.type === "GUILD_TEXT") as Channel[]
               }
               getOptionLabel={(c) => c.name}
-              onChange={(_e, value) =>
-                (channelRef.current = value?.discord_id ?? "")
-              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -81,7 +81,6 @@ const ReminderNewFormPage: NextPage = () => {
               ref={embedRef}
               options={embedData as Embed[]}
               getOptionLabel={(c) => c.header}
-              onChange={(_e, value) => (embedRef.current = value?.id ?? "")}
               renderInput={(params) => (
                 <TextField
                   {...params}

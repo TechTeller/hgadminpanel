@@ -13,8 +13,8 @@ const DiscordNewPage: NextPage = () => {
   const router = useRouter();
   const { pathname } = router;
 
-  const nameRef = useRef("");
-  const snowflakeRef = useRef("");
+  const nameRef = useRef<HTMLInputElement>();
+  const snowflakeRef = useRef<HTMLInputElement>();
   const typeRef = useRef<DiscordType>(DiscordType.ROLE);
 
   const submitMutation = trpc.discordRole.createOne.useMutation({
@@ -24,10 +24,13 @@ const DiscordNewPage: NextPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!nameRef.current || !snowflakeRef.current) {
+      return;
+    }
     submitMutation.mutate({
-      name: nameRef.current,
-      snowflake: snowflakeRef.current,
-      type: typeRef.current as DiscordType,
+      name: nameRef.current.value,
+      snowflake: snowflakeRef.current.value,
+      type: typeRef.current,
     });
   };
 
@@ -53,7 +56,6 @@ const DiscordNewPage: NextPage = () => {
               disablePortal
               ref={typeRef}
               options={Object.keys(DiscordType)}
-              onChange={(_e, value) => (typeRef.current = value as DiscordType)}
               renderInput={(params) => (
                 <TextField
                   {...params}

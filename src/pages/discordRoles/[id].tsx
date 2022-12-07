@@ -13,8 +13,8 @@ const DiscordIdPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const nameRef = useRef("");
-  const snowflakeRef = useRef("");
+  const nameRef = useRef<HTMLInputElement>();
+  const snowflakeRef = useRef<HTMLInputElement>();
   const typeRef = useRef<DiscordType>(DiscordType.ROLE);
 
   const { data, isLoading, refetch } = trpc.discordRole.findById.useQuery({
@@ -28,10 +28,13 @@ const DiscordIdPage: NextPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!nameRef.current || !snowflakeRef.current) {
+      return;
+    }
     submitMutation.mutate({
       id,
-      name: nameRef.current,
-      snowflake: snowflakeRef.current,
+      name: nameRef.current.value,
+      snowflake: snowflakeRef.current.value,
       type: typeRef.current,
     });
   };
@@ -64,9 +67,6 @@ const DiscordIdPage: NextPage = () => {
                 ref={typeRef}
                 options={Object.keys(DiscordType)}
                 defaultValue={data?.type}
-                onChange={(_e, value) =>
-                  (typeRef.current = value as DiscordType)
-                }
                 renderInput={(params) => (
                   <TextField
                     {...params}

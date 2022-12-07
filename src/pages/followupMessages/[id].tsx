@@ -18,9 +18,11 @@ const FollowupFormPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const titleRef = useRef("");
-  const descriptionRef = useRef("");
+  const titleRef = useRef<HTMLInputElement>();
+  const descriptionRef = useRef<HTMLInputElement>();
+  const intervalRef = useRef<HTMLInputElement>();
   const eventRef = useRef("");
+  const tagRef = useRef<HTMLInputElement>();
   const [active, setActive] = useState(true);
 
   const {
@@ -41,12 +43,19 @@ const FollowupFormPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!titleRef.current || !descriptionRef.current || !tagRef.current) {
+      return;
+    }
     submitMutation.mutate({
       id,
-      title: titleRef.current,
-      description: descriptionRef.current,
-      event_id: eventRef.current,
+      title: titleRef.current.value,
+      description: descriptionRef.current.value,
       active,
+      listening_time: intervalRef.current
+        ? Number(intervalRef.current.value)
+        : followupData?.scheduled_event_followup_settings?.listening_time,
+      event_id: eventRef.current,
+      tag: tagRef.current.value,
     });
   };
 
@@ -84,7 +93,6 @@ const FollowupFormPage = () => {
                   )[0]
                 }
                 getOptionLabel={(e) => e.title}
-                onChange={(_e, value) => (eventRef.current = value?.id ?? "")}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -95,6 +103,18 @@ const FollowupFormPage = () => {
                     }}
                   />
                 )}
+              />
+              <TextField
+                inputRef={tagRef}
+                label="Tag"
+                defaultValue={followupData?.tag}
+                inputProps={{ "aria-label": "followup-tag" }}
+              />
+              <TextField
+                inputRef={intervalRef}
+                label="Listening Time"
+                defaultValue={followupData?.scheduled_event_followup_settings?.listening_time}
+                inputProps={{ "aria-label": "followup-listening-time" }}
               />
               <FormControlLabel
                 label="Is Active"

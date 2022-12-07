@@ -10,8 +10,9 @@ const FollowUpAdminList = () => {
         columnProps={[
           { fieldName: "title", headerName: "Title" },
           { fieldName: "description", headerName: "Message" },
-          { fieldName: "eventName", headerName: "Event" },
+          { fieldName: "eventName", headerName: "Event or Tag" },
           { fieldName: "active", headerName: "Is Active" },
+          { fieldName: "listeningTime", headerName: "Listening Time" },
         ]}
         rowData={res.data ?? []}
         slug="followupMessages"

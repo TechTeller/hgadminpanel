@@ -13,7 +13,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 Settings.defaultZone = "America/Chicago";
 
 const ScheduleFormPage: NextPage = () => {
-  const topicRef = useRef("");
+  const topicRef = useRef<HTMLInputElement>();
 
   const getNextStreamDatetime = () => {
     const d = DateTime.now();
@@ -54,8 +54,11 @@ const ScheduleFormPage: NextPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
+    if (!topicRef.current) {
+      return;
+    }
     submitMutation.mutate({
-      streamTopic: topicRef.current,
+      streamTopic: topicRef.current.value,
       streamTime: streamTime.toSeconds().toString(),
     });
   };
