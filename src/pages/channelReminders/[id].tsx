@@ -80,6 +80,10 @@ const ReminderFormPage: NextPage = () => {
                   )[0]
                 }
                 getOptionLabel={(c) => c.name}
+                onChange={(_e, value) => {
+                  if (channelRef.current)
+                    channelRef.current = value?.discord_id ?? "";
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -104,6 +108,9 @@ const ReminderFormPage: NextPage = () => {
                   embedData?.filter((e) => e.id === reminderData?.embed_id)[0]
                 }
                 getOptionLabel={(e) => e.header}
+                onChange={(_e, value) => {
+                  if (embedRef.current) embedRef.current = value?.id ?? "";
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}

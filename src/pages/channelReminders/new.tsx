@@ -61,6 +61,9 @@ const ReminderNewFormPage: NextPage = () => {
                 channelData?.filter((c) => c.type === "GUILD_TEXT") as Channel[]
               }
               getOptionLabel={(c) => c.name}
+              onChange={(_e, value) =>
+                (channelRef.current = value?.discord_id ?? "")
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -81,6 +84,7 @@ const ReminderNewFormPage: NextPage = () => {
               ref={embedRef}
               options={embedData as Embed[]}
               getOptionLabel={(c) => c.header}
+              onChange={(_e, value) => (embedRef.current = value?.id ?? "")}
               renderInput={(params) => (
                 <TextField
                   {...params}

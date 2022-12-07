@@ -56,6 +56,7 @@ const DiscordNewPage: NextPage = () => {
               disablePortal
               ref={typeRef}
               options={Object.keys(DiscordType)}
+              onChange={(_e, value) => (typeRef.current = value as DiscordType)}
               renderInput={(params) => (
                 <TextField
                   {...params}

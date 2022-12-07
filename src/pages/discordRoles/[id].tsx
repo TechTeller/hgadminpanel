@@ -67,6 +67,9 @@ const DiscordIdPage: NextPage = () => {
                 ref={typeRef}
                 options={Object.keys(DiscordType)}
                 defaultValue={data?.type}
+                onChange={(_e, value) =>
+                  (typeRef.current = value as DiscordType)
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}

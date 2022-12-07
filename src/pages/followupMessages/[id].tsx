@@ -93,6 +93,7 @@ const FollowupFormPage = () => {
                   )[0]
                 }
                 getOptionLabel={(e) => e.title}
+                onChange={(_e, value) => (eventRef.current = value?.id ?? "")}
                 renderInput={(params) => (
                   <TextField
                     {...params}
