@@ -31,7 +31,7 @@ const ReminderFormPage: NextPage = () => {
     data: reminderData,
     isLoading: reminderLoading,
     refetch,
-  } = trpc.channelReminder.findById.useQuery({ id });
+  } = trpc.channelReminder.findById.useQuery({ id }, { enabled: !!id });
 
   const { data: channelData, isLoading: channelLoading } =
     trpc.channelReminder.getChannels.useQuery();
@@ -48,11 +48,17 @@ const ReminderFormPage: NextPage = () => {
     event.preventDefault();
     submitMutation.mutate({
       id,
-      channel_id: typeof channelRef.current === "string" ? channelRef.current : reminderData?.channel_id,
+      channel_id:
+        typeof channelRef.current === "string"
+          ? channelRef.current
+          : reminderData?.channel_id,
       message_interval: intervalRef.current
         ? Number(intervalRef.current.value)
         : reminderData?.message_interval,
-      embed_id: typeof embedRef.current === "string" ? embedRef.current : reminderData?.embed_id,
+      embed_id:
+        typeof embedRef.current === "string"
+          ? embedRef.current
+          : reminderData?.embed_id,
     });
   };
 

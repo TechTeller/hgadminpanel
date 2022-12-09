@@ -29,9 +29,7 @@ const FollowupFormPage = () => {
     data: followupData,
     isLoading: followupLoading,
     refetch,
-  } = trpc.followup.findById.useQuery({
-    id,
-  });
+  } = trpc.followup.findById.useQuery({ id }, { enabled: !!id });
 
   const { data: eventData, isLoading: eventLoading } =
     trpc.followup.getEvents.useQuery();
@@ -45,7 +43,7 @@ const FollowupFormPage = () => {
     event.preventDefault();
     if (!titleRef.current || !descriptionRef.current || !tagRef.current) {
       return;
-    } 
+    }
     submitMutation.mutate({
       id,
       title: titleRef.current.value,
@@ -55,9 +53,10 @@ const FollowupFormPage = () => {
         ? Number(intervalRef.current.value)
         : followupData?.scheduled_event_followup_settings?.listening_time,
       tag: tagRef.current.value,
-      event_id: typeof eventRef.current === "string"
-        ? eventRef.current
-        : followupData?.event_id,
+      event_id:
+        typeof eventRef.current === "string"
+          ? eventRef.current
+          : followupData?.event_id,
     });
   };
 
@@ -66,10 +65,10 @@ const FollowupFormPage = () => {
       <div className="m-2 self-start text-sm">
         <Link href="/followupMessages">{"< Back to list page"}</Link>
       </div>
-      {followupLoading || eventLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="w-full p-4">
+      <div className="w-full p-4">
+        {followupLoading || eventLoading ? (
+          <div>Loading...</div>
+        ) : (
           <form onSubmit={handleSubmit}>
             <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
               <TextField
@@ -91,7 +90,7 @@ const FollowupFormPage = () => {
                 options={eventData as Event[]}
                 defaultValue={
                   eventData?.filter(
-                    (e: Event) => e.id === followupData?.event_id,
+                    (e: Event) => e.id === followupData?.event_id
                   )[0]
                 }
                 getOptionLabel={(e) => e.title}
@@ -116,7 +115,10 @@ const FollowupFormPage = () => {
               <TextField
                 inputRef={intervalRef}
                 label="Listening Time"
-                defaultValue={followupData?.scheduled_event_followup_settings?.listening_time}
+                defaultValue={
+                  followupData?.scheduled_event_followup_settings
+                    ?.listening_time
+                }
                 inputProps={{ "aria-label": "followup-listening-time" }}
               />
               <FormControlLabel
@@ -136,8 +138,8 @@ const FollowupFormPage = () => {
               </Button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </div>
     </Layout>
   );
 };

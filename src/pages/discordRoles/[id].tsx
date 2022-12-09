@@ -17,9 +17,10 @@ const DiscordIdPage: NextPage = () => {
   const snowflakeRef = useRef<HTMLInputElement>();
   const typeRef = useRef<DiscordType>(DiscordType.ROLE);
 
-  const { data, isLoading, refetch } = trpc.discordRole.findById.useQuery({
-    id,
-  });
+  const { data, isLoading, refetch } = trpc.discordRole.findById.useQuery(
+    { id },
+    { enabled: !!id }
+  );
 
   const submitMutation = trpc.discordRole.updateOne.useMutation({
     onSuccess: () => refetch(),
@@ -44,10 +45,10 @@ const DiscordIdPage: NextPage = () => {
       <div className="m-2 self-start text-sm">
         <Link href="/discordRoles">{"< Back to list page"}</Link>
       </div>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="w-full p-4">
+      <div className="w-full p-4">
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
           <form onSubmit={handleSubmit}>
             <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
               <TextField
@@ -86,8 +87,8 @@ const DiscordIdPage: NextPage = () => {
               </Button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </div>
     </Layout>
   );
 };

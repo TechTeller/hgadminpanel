@@ -37,12 +37,12 @@ const ScheduleFormPage: NextPage = () => {
   // the first prop here is literal undefined
   // so that we can use the second prop that uses callbacks
   // this query doesn't need input otherwise
-  const { data, refetch } = trpc.schedule.get.useQuery(undefined, {
+  const { data, isLoading, refetch } = trpc.schedule.get.useQuery(undefined, {
     onSuccess: (data) => {
       const { time: dataStreamTime } = data;
       const prevStreamTime = DateTime.fromSeconds(Number(dataStreamTime.value));
       if (prevStreamTime >= DateTime.now()) {
-        setStreamTime(prevStreamTime)
+        setStreamTime(prevStreamTime);
       }
     },
   });
@@ -69,28 +69,32 @@ const ScheduleFormPage: NextPage = () => {
         <Link href="/">{"< Back to main page"}</Link>
       </div>
       <div className="w-full p-4">
-        <form onSubmit={handleSubmit}>
-          <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
-            <TextField
-              inputRef={topicRef}
-              label="Stream Topic"
-              defaultValue={data?.topic.value}
-              inputProps={{ "aria-label": "embed-header" }}
-            />
-            <LocalizationProvider dateAdapter={AdapterLuxon}>
-              <DateTimePicker
-                renderInput={(props) => <TextField {...props} />}
-                label="Stream Date and Time (Times are set to US Central Time)"
-                value={streamTime}
-                onChange={(newValue) => setStreamTime(newValue as DateTime)}
-                inputFormat="DDDD, T ZZZZ"
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
+              <TextField
+                inputRef={topicRef}
+                label="Stream Topic"
+                defaultValue={data?.topic.value}
+                inputProps={{ "aria-label": "embed-header" }}
               />
-            </LocalizationProvider>
-            <Button type="submit" variant="contained">
-              Save
-            </Button>
-          </div>
-        </form>
+              <LocalizationProvider dateAdapter={AdapterLuxon}>
+                <DateTimePicker
+                  renderInput={(props) => <TextField {...props} />}
+                  label="Stream Date and Time (Times are set to US Central Time)"
+                  value={streamTime}
+                  onChange={(newValue) => setStreamTime(newValue as DateTime)}
+                  inputFormat="DDDD, T ZZZZ"
+                />
+              </LocalizationProvider>
+              <Button type="submit" variant="contained">
+                Save
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
     </Layout>
   );
