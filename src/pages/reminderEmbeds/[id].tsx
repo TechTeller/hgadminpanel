@@ -13,7 +13,7 @@ const ReminderEmbedFormPage = () => {
   const headerRef = useRef<HTMLInputElement>();
   const descriptionRef = useRef<HTMLInputElement>();
 
-  const { data, refetch } = trpc.reminderEmbed.findById.useQuery({ id });
+  const { data, isLoading, refetch } = trpc.reminderEmbed.findById.useQuery({ id });
 
   const submitMutation = trpc.reminderEmbed.updateOne.useMutation({
     onSuccess: () => refetch(),
@@ -38,27 +38,32 @@ const ReminderEmbedFormPage = () => {
         <Link href="/reminderEmbeds">{"< Back to list page"}</Link>
       </div>
       <div className="w-full p-4">
-        <form onSubmit={handleSubmit}>
-          <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
-            <TextField
-              inputRef={headerRef}
-              label="Title"
-              defaultValue={data?.header}
-              inputProps={{ "aria-label": "embed-header" }}
-            />
-            <TextField
-              inputRef={descriptionRef}
-              label="Message"
-              defaultValue={data?.description}
-              multiline
-              rows={4}
-              inputProps={{ "aria-label": "embed-description" }}
-            />
-            <Button type="submit" variant="contained">
-              Save
-            </Button>
-          </div>
-        </form>
+        {isLoading
+          ? <div>Loading...</div>
+          : (
+            <form onSubmit={handleSubmit}>
+              <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
+                <TextField
+                  inputRef={headerRef}
+                  label="Title"
+                  defaultValue={data?.header}
+                  inputProps={{ "aria-label": "embed-header" }}
+                />
+                <TextField
+                  inputRef={descriptionRef}
+                  label="Message"
+                  defaultValue={data?.description}
+                  multiline
+                  rows={4}
+                  inputProps={{ "aria-label": "embed-description" }}
+                />
+                <Button type="submit" variant="contained">
+                  Save
+                </Button>
+              </div>
+            </form>
+          )
+        }
       </div>
     </Layout>
   );

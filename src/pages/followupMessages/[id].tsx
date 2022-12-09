@@ -45,7 +45,7 @@ const FollowupFormPage = () => {
     event.preventDefault();
     if (!titleRef.current || !descriptionRef.current || !tagRef.current) {
       return;
-    }
+    } 
     submitMutation.mutate({
       id,
       title: titleRef.current.value,
@@ -54,8 +54,10 @@ const FollowupFormPage = () => {
       listening_time: intervalRef.current
         ? Number(intervalRef.current.value)
         : followupData?.scheduled_event_followup_settings?.listening_time,
-      event_id: eventRef.current,
       tag: tagRef.current.value,
+      event_id: typeof eventRef.current === "string"
+        ? eventRef.current
+        : followupData?.event_id,
     });
   };
 
@@ -89,7 +91,7 @@ const FollowupFormPage = () => {
                 options={eventData as Event[]}
                 defaultValue={
                   eventData?.filter(
-                    (e: Event) => e.id === followupData?.event_data
+                    (e: Event) => e.id === followupData?.event_id,
                   )[0]
                 }
                 getOptionLabel={(e) => e.title}

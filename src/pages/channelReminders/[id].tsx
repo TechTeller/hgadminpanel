@@ -48,11 +48,11 @@ const ReminderFormPage: NextPage = () => {
     event.preventDefault();
     submitMutation.mutate({
       id,
-      channel_id: channelRef.current ?? reminderData?.channel_id,
+      channel_id: typeof channelRef.current === "string" ? channelRef.current : reminderData?.channel_id,
       message_interval: intervalRef.current
         ? Number(intervalRef.current.value)
         : reminderData?.message_interval,
-      embed_id: embedRef.current ?? reminderData?.embed_id,
+      embed_id: typeof embedRef.current === "string" ? embedRef.current : reminderData?.embed_id,
     });
   };
 
