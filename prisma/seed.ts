@@ -14,6 +14,7 @@ async function main() {
   const admin = await prisma.discordRole.upsert({
     where: { id: "1" },
     create: {
+      id: "1",
       name: "Admin",
       snowflake: admin_snowflake,
       type: DiscordType.ROLE,
@@ -23,6 +24,7 @@ async function main() {
   const botdev = await prisma.discordRole.upsert({
     where: { id: "2" },
     create: {
+      id: "2",
       name: "Bot Dev",
       snowflake: botdev_snowflake,
       type: DiscordType.ROLE,
