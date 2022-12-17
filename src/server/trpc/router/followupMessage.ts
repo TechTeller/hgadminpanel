@@ -14,9 +14,9 @@ export interface InitialFollowup {
   scheduled_events: {
     title: string;
   } | null;
-  scheduled_event_followup_settings: { 
+  scheduled_event_followup_settings: {
     listening_time: number;
-  }| null;
+  } | null;
 }
 
 export const followupRouter = router({
@@ -37,16 +37,21 @@ export const followupRouter = router({
     .query(async () => {
       const json = await jsonFetch(`${BOT_API_URL}/followups/`, "GET");
       return json.map((item: InitialFollowup) => {
-        const { scheduled_events, tag, scheduled_event_followup_settings, ...rest } = item;
-        return { 
-          eventName: scheduled_events?.title ?? tag, 
-          listeningTime: scheduled_event_followup_settings?.listening_time ?? 0,
+        const {
+          scheduled_events,
+          tag,
+          scheduled_event_followup_settings,
           ...rest
+        } = item;
+        return {
+          eventName: scheduled_events?.title ?? tag,
+          listeningTime: scheduled_event_followup_settings?.listening_time ?? 0,
+          ...rest,
         };
       });
     }),
   getEvents: protectedProcedure.query(async () => {
-    return await jsonFetch(`${BOT_API_URL}/events/`, "GET");
+    return await jsonFetch(`${BOT_API_URL}/events/recent`, "GET");
   }),
   createOne: protectedProcedure
     .input(
@@ -76,12 +81,12 @@ export const followupRouter = router({
     )
     .mutation(async ({ input }) => {
       const { id, ...rest } = input;
-      return await jsonFetch(`${BOT_API_URL}/followup/${id}`, "PUT", rest);
+      return await jsonFetch(`${BOT_API_URL}/followups/${id}`, "PUT", rest);
     }),
   findById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
       const { id } = input;
-      return await jsonFetch(`${BOT_API_URL}/followup/${id}`, "GET");
+      return await jsonFetch(`${BOT_API_URL}/followups/${id}`, "GET");
     }),
 });

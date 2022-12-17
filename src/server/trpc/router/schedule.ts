@@ -7,7 +7,7 @@ const { BOT_API_URL } = env;
 
 export const scheduleRouter = router({
   get: protectedProcedure.query(async () => {
-    return await jsonFetch(`${BOT_API_URL}/schedule/`, "GET");
+    return await jsonFetch(`${BOT_API_URL}/schedule`, "GET");
   }),
   update: protectedProcedure
     .input(z.object({ streamTopic: z.string(), streamTime: z.string() }))

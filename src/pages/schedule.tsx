@@ -16,17 +16,21 @@ const ScheduleFormPage: NextPage = () => {
   const topicRef = useRef<HTMLInputElement>();
 
   const getNextStreamDatetime = () => {
-    const d = DateTime.now();
-    const noon = d.set({ hour: 12 }).startOf("hour");
+    const nowTime = DateTime.now();
+    const noon = nowTime.set({ hour: 12 }).startOf("hour");
+    const monday = noon.set({ weekday: 1 });
+    const wednesday = noon.set({ weekday: 3 });
+    const friday = noon.set({ weekday: 5 });
+    const nextMonday = monday.plus({ days: 7 });
     let result;
-    if (noon < d.set({ weekday: 1 })) {
-      result = noon.set({ weekday: 1 });
-    } else if (noon < d.set({ weekday: 3 })) {
-      result = noon.set({ weekday: 3 });
-    } else if (noon < d.set({ weekday: 5 })) {
-      result = noon.set({ weekday: 5 });
+    if (monday >= nowTime) {
+      result = monday;
+    } else if (wednesday >= nowTime) {
+      result = wednesday;
+    } else if (friday >= nowTime) {
+      result = friday;
     } else {
-      result = noon.set({ weekday: 1 }).plus({ days: 7 });
+      result = nextMonday;
     }
     return result;
   };
@@ -40,9 +44,9 @@ const ScheduleFormPage: NextPage = () => {
   const { data, isLoading, refetch } = trpc.schedule.get.useQuery(undefined, {
     onSuccess: (data) => {
       const { time: dataStreamTime } = data;
-      const prevStreamTime = DateTime.fromSeconds(Number(dataStreamTime.value));
-      if (prevStreamTime >= DateTime.now()) {
-        setStreamTime(prevStreamTime);
+      const parsedTime = DateTime.fromSeconds(Number(dataStreamTime.value));
+      if (parsedTime >= DateTime.now()) {
+        setStreamTime(parsedTime);
       }
     },
   });

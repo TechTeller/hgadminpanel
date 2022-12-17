@@ -3,7 +3,7 @@ import { router } from "../trpc";
 import { authRouter } from "./auth";
 import { channelReminderRouter } from "./channelReminder";
 import { discordRoleRouter } from "./discordRole";
-import { followupRouter } from "./followUp";
+import { followupRouter } from "./followupMessage";
 import { reminderEmbedRouter } from "./reminderEmbed";
 import { scheduleRouter } from "./schedule";
 

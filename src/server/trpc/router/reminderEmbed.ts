@@ -30,12 +30,12 @@ export const reminderEmbedRouter = router({
     )
     .mutation(async ({ input }) => {
       const { id, ...rest } = input;
-      return await jsonFetch(`${BOT_API_URL}/embed/${id}`, "PUT", rest);
+      return await jsonFetch(`${BOT_API_URL}/embeds/${id}`, "PUT", rest);
     }),
   findById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
       const { id } = input;
-      return await jsonFetch(`${BOT_API_URL}/embed/${id}`, "GET");
+      return await jsonFetch(`${BOT_API_URL}/embeds/${id}`, "GET");
     }),
 });
