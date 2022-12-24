@@ -1,5 +1,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 import type { NextPage } from "next";
+import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
@@ -9,29 +10,56 @@ import { DateTime, Settings } from "luxon";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { Property } from "@prisma/client";
 
 Settings.defaultZone = "America/Chicago";
+const weekdayValues = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 const ScheduleFormPage: NextPage = () => {
   const topicRef = useRef<HTMLInputElement>();
 
-  const getNextStreamDatetime = () => {
-    const d = DateTime.now();
-    const noon = d.set({ hour: 12 }).startOf("hour");
+  const [weeklySchedule, setWeeklySchedule] = useState<string[]>([]);
+  const { refetch: dbRefetch } = trpc.schedule.getWeeklySchedule.useQuery(
+    undefined,
+    {
+      onSuccess: (data) => {
+        const { value } = data as Property;
+        setWeeklySchedule(JSON.parse(value));
+      },
+    }
+  );
+
+  const getScheduledNextStreamDatetime = () => {
+    const today = DateTime.now();
+    const noon = today.set({ hour: 12 }).startOf("hour");
+
     let result;
-    if (noon < d.set({ weekday: 1 })) {
-      result = noon.set({ weekday: 1 });
-    } else if (noon < d.set({ weekday: 3 })) {
-      result = noon.set({ weekday: 3 });
-    } else if (noon < d.set({ weekday: 5 })) {
-      result = noon.set({ weekday: 5 });
-    } else {
-      result = noon.set({ weekday: 1 }).plus({ days: 7 });
+    for (const weekday of weeklySchedule) {
+      const weekdayToNum = weekdayValues.indexOf(weekday) || 1;
+      if (noon < today.set({ weekday: weekdayToNum })) {
+        result = noon.set({ weekday: weekdayToNum });
+      }
+    }
+    // if at end of week, start at the beginning of next week
+    if (!result) {
+      const weekdayToNum = weekdayValues.indexOf(
+        weeklySchedule?.[0] || "Monday"
+      );
+      result = noon.set({ weekday: weekdayToNum }).plus({ days: 7 });
     }
     return result;
   };
+
   const [streamTime, setStreamTime] = useState<DateTime>(
-    getNextStreamDatetime()
+    getScheduledNextStreamDatetime()
   );
 
   // the first prop here is literal undefined
@@ -47,8 +75,12 @@ const ScheduleFormPage: NextPage = () => {
     },
   });
 
-  const submitMutation = trpc.schedule.update.useMutation({
+  const submitScheduleMutation = trpc.schedule.update.useMutation({
     onSuccess: () => refetch(),
+  });
+
+  const submitWeeklyMutation = trpc.schedule.setWeeklySchedule.useMutation({
+    onSuccess: () => dbRefetch(),
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,9 +89,12 @@ const ScheduleFormPage: NextPage = () => {
     if (!topicRef.current) {
       return;
     }
-    submitMutation.mutate({
+    submitScheduleMutation.mutate({
       streamTopic: topicRef.current.value,
       streamTime: streamTime.toSeconds().toString(),
+    });
+    submitWeeklyMutation.mutate({
+      value: JSON.stringify(weeklySchedule),
     });
   };
 
@@ -89,6 +124,23 @@ const ScheduleFormPage: NextPage = () => {
                   inputFormat="DDDD, T ZZZZ"
                 />
               </LocalizationProvider>
+              <Autocomplete
+                multiple
+                options={weekdayValues}
+                value={weeklySchedule}
+                onChange={(_e, value) => setWeeklySchedule(value)}
+                filterSelectedOptions
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Weekly Schedule"
+                    inputProps={{
+                      ...params.inputProps,
+                      "aria-label": "schedule-weekly",
+                    }}
+                  />
+                )}
+              />
               <Button type="submit" variant="contained">
                 Save
               </Button>

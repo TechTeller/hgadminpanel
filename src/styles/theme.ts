@@ -40,6 +40,20 @@ const theme = createTheme({
         disablePortal: true,
       },
     },
+    MuiChip: {
+      defaultProps: {
+        variant: "filled",
+      },
+      styleOverrides: {
+        root: {
+          color: "#f1f5f9",
+          backgroundColor: "#475569",
+        },
+        deleteIcon: {
+          color: "#f1f5f9",
+        },
+      },
+    },
   },
 });
 
