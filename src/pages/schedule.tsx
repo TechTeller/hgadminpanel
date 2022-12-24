@@ -24,18 +24,9 @@ const weekdayValues = [
 ];
 
 const ScheduleFormPage: NextPage = () => {
-  const topicRef = useRef<HTMLInputElement>();
-
+  const [streamTopic, setStreamTopic] = useState("TBA");
+  const [streamTime, setStreamTime] = useState<DateTime>(DateTime.now());
   const [weeklySchedule, setWeeklySchedule] = useState<string[]>([]);
-  const { refetch: dbRefetch } = trpc.schedule.getWeeklySchedule.useQuery(
-    undefined,
-    {
-      onSuccess: (data) => {
-        const { value } = data as Property;
-        setWeeklySchedule(JSON.parse(value));
-      },
-    }
-  );
 
   const getScheduledNextStreamDatetime = () => {
     const today = DateTime.now();
@@ -58,22 +49,31 @@ const ScheduleFormPage: NextPage = () => {
     return result;
   };
 
-  const [streamTime, setStreamTime] = useState<DateTime>(
-    getScheduledNextStreamDatetime()
-  );
-
   // the first prop here is literal undefined
   // so that we can use the second prop that uses callbacks
   // this query doesn't need input otherwise
-  const { data, isLoading, refetch } = trpc.schedule.get.useQuery(undefined, {
+  const { isLoading, refetch } = trpc.schedule.get.useQuery(undefined, {
     onSuccess: (data) => {
-      const { time: dataStreamTime } = data;
-      const prevStreamTime = DateTime.fromSeconds(Number(dataStreamTime.value));
+      const { topic, time } = data;
+      const prevStreamTime = DateTime.fromSeconds(Number(time.value));
       if (prevStreamTime >= DateTime.now()) {
+        setStreamTopic(topic.value);
         setStreamTime(prevStreamTime);
+      } else {
+        setStreamTime(getScheduledNextStreamDatetime());
       }
     },
   });
+
+  const { refetch: dbRefetch } = trpc.schedule.getWeeklySchedule.useQuery(
+    undefined,
+    {
+      onSuccess: (data) => {
+        const { value } = data as Property;
+        setWeeklySchedule(JSON.parse(value));
+      },
+    }
+  );
 
   const submitScheduleMutation = trpc.schedule.update.useMutation({
     onSuccess: () => refetch(),
@@ -86,11 +86,8 @@ const ScheduleFormPage: NextPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!topicRef.current) {
-      return;
-    }
     submitScheduleMutation.mutate({
-      streamTopic: topicRef.current.value,
+      streamTopic: streamTopic,
       streamTime: streamTime.toSeconds().toString(),
     });
     submitWeeklyMutation.mutate({
@@ -110,9 +107,8 @@ const ScheduleFormPage: NextPage = () => {
           <form onSubmit={handleSubmit}>
             <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
               <TextField
-                inputRef={topicRef}
                 label="Stream Topic"
-                defaultValue={data?.topic.value}
+                value={streamTopic}
                 inputProps={{ "aria-label": "embed-header" }}
               />
               <LocalizationProvider dateAdapter={AdapterLuxon}>
