@@ -34,7 +34,11 @@ const ScheduleFormPage: NextPage = () => {
 
     let result;
     for (const weekday of weeklySchedule) {
-      const weekdayToNum = weekdayValues.indexOf(weekday) || 1;
+      let weekdayToNum = weekdayValues.indexOf(weekday);
+      // if indexOf fails, Monday by default
+      if (weekdayToNum === -1) {
+        weekdayToNum = 1;
+      }
       if (noon < today.set({ weekday: weekdayToNum })) {
         result = noon.set({ weekday: weekdayToNum });
       }
