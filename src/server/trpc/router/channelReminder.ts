@@ -62,12 +62,12 @@ export const channelReminderRouter = router({
     )
     .mutation(async ({ input }) => {
       const { id, ...rest } = input;
-      return await jsonFetch(`${BOT_API_URL}/reminder/${id}`, "PUT", rest);
+      return await jsonFetch(`${BOT_API_URL}/reminders/${id}`, "PUT", rest);
     }),
   findById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
       const { id } = input;
-      return await jsonFetch(`${BOT_API_URL}/reminder/${id}`, "GET");
+      return await jsonFetch(`${BOT_API_URL}/reminders/${id}`, "GET");
     }),
 });
