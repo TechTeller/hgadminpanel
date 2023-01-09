@@ -1,5 +1,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 import type { NextPage } from "next";
+import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import Layout from "@/components/Layout";
@@ -9,61 +10,92 @@ import { DateTime, Settings } from "luxon";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { Property } from "@prisma/client";
 
 Settings.defaultZone = "America/Chicago";
+const weekdayValues = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 const ScheduleFormPage: NextPage = () => {
-  const topicRef = useRef<HTMLInputElement>();
+  const [streamTopic, setStreamTopic] = useState("TBA");
+  const [streamTime, setStreamTime] = useState<DateTime>(DateTime.now());
+  const [weeklySchedule, setWeeklySchedule] = useState<string[]>([]);
 
-  const getNextStreamDatetime = () => {
-    const nowTime = DateTime.now();
-    const noon = nowTime.set({ hour: 12 }).startOf("hour");
-    const monday = noon.set({ weekday: 1 });
-    const wednesday = noon.set({ weekday: 3 });
-    const friday = noon.set({ weekday: 5 });
-    const nextMonday = monday.plus({ days: 7 });
+  const getScheduledNextStreamDatetime = () => {
+    const today = DateTime.now();
+    const noon = today.set({ hour: 12 }).startOf("hour");
+
     let result;
-    if (monday >= nowTime) {
-      result = monday;
-    } else if (wednesday >= nowTime) {
-      result = wednesday;
-    } else if (friday >= nowTime) {
-      result = friday;
-    } else {
-      result = nextMonday;
+    for (const weekday of weeklySchedule) {
+      let weekdayToNum = weekdayValues.indexOf(weekday);
+      // if indexOf fails, Monday by default
+      if (weekdayToNum === -1) {
+        weekdayToNum = 1;
+      }
+      if (noon < today.set({ weekday: weekdayToNum })) {
+        result = noon.set({ weekday: weekdayToNum });
+      }
+    }
+    // if at end of week, start at the beginning of next week
+    if (!result) {
+      const weekdayToNum = weekdayValues.indexOf(
+        weeklySchedule?.[0] || "Monday"
+      );
+      result = noon.set({ weekday: weekdayToNum }).plus({ days: 7 });
     }
     return result;
   };
-  const [streamTime, setStreamTime] = useState<DateTime>(
-    getNextStreamDatetime()
-  );
 
   // the first prop here is literal undefined
   // so that we can use the second prop that uses callbacks
   // this query doesn't need input otherwise
-  const { data, isLoading, refetch } = trpc.schedule.get.useQuery(undefined, {
+  const { isLoading, refetch } = trpc.schedule.get.useQuery(undefined, {
     onSuccess: (data) => {
-      const { time: dataStreamTime } = data;
-      const parsedTime = DateTime.fromSeconds(Number(dataStreamTime.value));
-      if (parsedTime >= DateTime.now()) {
-        setStreamTime(parsedTime);
+      const { topic, time } = data;
+      const prevStreamTime = DateTime.fromSeconds(Number(time.value));
+      if (prevStreamTime >= DateTime.now()) {
+        setStreamTopic(topic.value);
+        setStreamTime(prevStreamTime);
+      } else {
+        setStreamTime(getScheduledNextStreamDatetime());
       }
     },
   });
 
-  const submitMutation = trpc.schedule.update.useMutation({
+  const { refetch: dbRefetch } = trpc.schedule.getWeeklySchedule.useQuery(
+    undefined,
+    {
+      onSuccess: (data) => {
+        const { value } = data as Property;
+        setWeeklySchedule(JSON.parse(value));
+      },
+    }
+  );
+
+  const submitScheduleMutation = trpc.schedule.update.useMutation({
     onSuccess: () => refetch(),
+  });
+
+  const submitWeeklyMutation = trpc.schedule.setWeeklySchedule.useMutation({
+    onSuccess: () => dbRefetch(),
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (event: ChangeEvent<any>) => {
     event.preventDefault();
-    if (!topicRef.current) {
-      return;
-    }
-    submitMutation.mutate({
-      streamTopic: topicRef.current.value,
+    submitScheduleMutation.mutate({
+      streamTopic: streamTopic,
       streamTime: streamTime.toSeconds().toString(),
+    });
+    submitWeeklyMutation.mutate({
+      value: JSON.stringify(weeklySchedule),
     });
   };
 
@@ -79,9 +111,8 @@ const ScheduleFormPage: NextPage = () => {
           <form onSubmit={handleSubmit}>
             <div className="flex w-full flex-1 flex-col gap-4 bg-slate-600 p-4">
               <TextField
-                inputRef={topicRef}
                 label="Stream Topic"
-                defaultValue={data?.topic.value}
+                value={streamTopic}
                 inputProps={{ "aria-label": "embed-header" }}
               />
               <LocalizationProvider dateAdapter={AdapterLuxon}>
@@ -93,6 +124,23 @@ const ScheduleFormPage: NextPage = () => {
                   inputFormat="DDDD, T ZZZZ"
                 />
               </LocalizationProvider>
+              <Autocomplete
+                multiple
+                options={weekdayValues}
+                value={weeklySchedule}
+                onChange={(_e, value) => setWeeklySchedule(value)}
+                filterSelectedOptions
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Weekly Schedule"
+                    inputProps={{
+                      ...params.inputProps,
+                      "aria-label": "schedule-weekly",
+                    }}
+                  />
+                )}
+              />
               <Button type="submit" variant="contained">
                 Save
               </Button>

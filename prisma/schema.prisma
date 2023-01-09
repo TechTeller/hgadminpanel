@@ -62,3 +62,8 @@ enum DiscordType {
   ROLE
   USER
 }
+
+model Property {
+  key   String @id
+  value String
+}
